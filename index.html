@@ -40,11 +40,11 @@ body {
   font-family: var(--font-ar);
   font-size: 16px;
   line-height: 1.7;
-  padding-block: 28px 56px;
+  padding-block: 20px 48px;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
-.wrap { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px; }
+.wrap { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 30px; }
 h1, h2, h3, p { margin: 0; }
 button { font: inherit; color: inherit; cursor: pointer; }
 :focus-visible { outline: 3px solid var(--say); outline-offset: 2px; }
@@ -76,10 +76,10 @@ h3 { font-weight: 800; font-size: 1.05rem; }
 .panel > p { color: var(--muted); font-size: .93rem; margin-top: 2px; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .grp { display: flex; align-items: flex-start; gap: 14px; }
-.grp .big { font-family: var(--font-fr); font-size: 3.4rem; line-height: 1; color: var(--say); direction: ltr; flex: none; width: 2.2rem; text-align: center; }
+.grp .big { font-family: var(--font-fr); font-size: 2.6rem; line-height: 1; color: var(--say); direction: ltr; flex: none; width: 2.2rem; text-align: center; }
 .grp .chips { margin-top: 0; flex: 1; min-width: 0; }
 
-.chip { display: inline-flex; align-items: center; gap: 10px; direction: ltr; min-height: 46px; padding: 6px 12px 6px 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; font-family: var(--font-fr); font-size: 1.4rem; line-height: 1.2; transition: border-color .15s, background-color .15s; }
+.chip { display: inline-flex; align-items: center; gap: 10px; direction: ltr; min-height: 46px; padding: 6px 12px 6px 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; font-family: var(--font-fr); font-size: 1.2rem; line-height: 1.2; transition: border-color .15s, background-color .15s; }
 .chip svg { width: 18px; height: 18px; flex: none; color: var(--muted); }
 .chip:hover { border-color: var(--say); }
 .chip.playing { border-color: var(--say); background: var(--say-bg); }
@@ -127,6 +127,9 @@ h3 { font-weight: 800; font-size: 1.05rem; }
 
 @media (max-width: 420px) {
   .grp { flex-direction: column; gap: 8px; }
+  .pair { grid-template-columns: 1fr; }
+  .panel { padding: 14px; }
+  .qword .w { font-size: 2.2rem; }
   .grp .big { width: auto; text-align: right; }
   .opts { grid-template-columns: 1fr; }
 }
