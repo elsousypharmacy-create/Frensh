@@ -226,7 +226,7 @@ input[type=text] { font: inherit; font-family: var(--font-fr); font-size: 1.4rem
 .writer .stage { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 12px 0; }
 .writer .answer { font-family: var(--font-fr); font-size: 2rem; color: var(--ok); direction: ltr; min-height: 2.6rem; }
 @media (prefers-reduced-motion: reduce) { .pic .emo { animation: none; } }
-.chip small { font-family: var(--font-ar); font-size: .8rem; color: var(--muted); direction: rtl; }
+.chip small { white-space: nowrap; font-family: var(--font-ar); font-size: .8rem; color: var(--muted); direction: rtl; }
 .ptext { font-family: var(--font-fr); font-size: 1.2rem; direction: ltr; line-height: 1.6; flex: 1; min-width: 0; }
 .ptext .rl { margin: 0 1px; }
 .art-col h3 .fr { font-size: 1.5rem; color: var(--say); }
@@ -325,9 +325,9 @@ input[type=text] { font: inherit; font-family: var(--font-fr); font-size: 1.4rem
       <div class="box">
         <div class="chips" style="margin-top:0;justify-content:center" id="vow5"></div>
         <div class="grid2" style="margin-top:14px;grid-template-columns:repeat(3,1fr)">
-          <button type="button" class="panel pc" data-say="é, le café" style="text-align:center;font:inherit;color:inherit"><div class="bigw">é</div><b class="fr">accent aigu</b><p class="hint">/e/ مقفولة</p><span class="fr" style="color:var(--say)">le café 🔊</span></button>
-          <button type="button" class="panel pc" data-say="è, la mère" style="text-align:center;font:inherit;color:inherit"><div class="bigw">è</div><b class="fr">accent grave</b><p class="hint">/ɛ/ مفتوحة</p><span class="fr" style="color:var(--say)">la mère 🔊</span></button>
-          <button type="button" class="panel pc" data-say="ê, la fête" style="text-align:center;font:inherit;color:inherit"><div class="bigw">ê</div><b class="fr">accent circonflexe</b><p class="hint">/ɛ/ مفتوحة</p><span class="fr" style="color:var(--say)">la fête 🔊</span></button>
+          <button type="button" class="panel pc" data-say="é, le café" style="text-align:center;font:inherit;color:inherit"><div class="bigw">é</div><b class="fr">accent aigu</b><p class="hint">/e/ مقفولة</p><b style="color:var(--ok)">زي «بيت»</b><span class="fr" style="color:var(--say)">le café 🔊</span></button>
+          <button type="button" class="panel pc" data-say="è, la mère" style="text-align:center;font:inherit;color:inherit"><div class="bigw">è</div><b class="fr">accent grave</b><p class="hint">/ɛ/ مفتوحة</p><b style="color:var(--ok)">زي bed</b><span class="fr" style="color:var(--say)">la mère 🔊</span></button>
+          <button type="button" class="panel pc" data-say="ê, la fête" style="text-align:center;font:inherit;color:inherit"><div class="bigw">ê</div><b class="fr">accent circonflexe</b><p class="hint">/ɛ/ مفتوحة</p><b style="color:var(--ok)">زي bed</b><span class="fr" style="color:var(--say)">la fête 🔊</span></button>
         </div>
       </div>
       <div class="stack" id="sames"></div>
@@ -445,6 +445,34 @@ input[type=text] { font: inherit; font-family: var(--font-fr); font-size: 1.4rem
         <span class="tag">الأصوات</span>
         <h2><span class="fr">é /e/</span> ولا <span class="fr">è /ɛ/</span>؟</h2>
         <p><b>é</b> بوق مقفول ومبتسم، قريبة من «إيه» قصيرة. <b>è</b> بوق مفتوح أكتر، زي «إِ» في «بِنت». الكلمة هتبقى مخفية، فاعتمد على ودنك.</p>
+      </div>
+      <div class="box">
+        <h3>الفرق بين الـ e</h3>
+        <div class="callout" style="font-size:1.05rem;margin-top:8px"><b>المفتاح:</b> <b>é = «بيت»</b> بالمصري (café، été) · <b>è / ê = bed</b> بالإنجليزي (mère، fête)</div>
+        <p class="hint" style="margin-top:8px">الفرق كله في فتحة البُق. دوس على أي كلمة واسمع.</p>
+        <div class="grid2" style="margin-top:12px">
+          <div class="panel"><div class="row"><span class="bigw">é</span><b class="fr">accent aigu</b><span class="ipa">/e/</span></div>
+            <p style="margin-top:6px"><b>مقفولة، زي «بيت»:</b> بُقك شبه مقفول ومبتسم، وشفايفك مشدودة لبرّه. قريبة من «إي» قصيرة من غير ما تمطّها.</p>
+            <div class="chips" dir="ltr"><button type="button" class="chip plain" data-say="café">café</button><button type="button" class="chip plain" data-say="été">été</button><button type="button" class="chip plain" data-say="bébé">bébé</button></div></div>
+          <div class="panel"><div class="row"><span class="bigw">è</span><b class="fr">accent grave</b><span class="ipa">/ɛ/</span></div>
+            <p style="margin-top:6px"><b>مفتوحة، زي bed:</b> افتح بُقك أكتر ونزّل الفك شوية. زي «إِ» في «بِنت»، أو e في bed الإنجليزي.</p>
+            <div class="chips" dir="ltr"><button type="button" class="chip plain" data-say="la mère">mère</button><button type="button" class="chip plain" data-say="le père">père</button><button type="button" class="chip plain" data-say="le frère">frère</button></div></div>
+          <div class="panel"><div class="row"><span class="bigw">ê</span><b class="fr">accent circonflexe</b><span class="ipa">/ɛ/</span></div>
+            <p style="margin-top:6px"><b>نفس صوت è بالظبط.</b> القبعة غالبًا مكان حرف s قديم، وده بيساعدك تفتكر المعنى: <span class="fr">fête</span> = feast، و <span class="fr">forêt</span> = forest.</p>
+            <div class="chips" dir="ltr"><button type="button" class="chip plain" data-say="la fête">fête</button><button type="button" class="chip plain" data-say="la forêt">forêt</button><button type="button" class="chip plain" data-say="la tête">tête</button></div></div>
+          <div class="panel"><div class="row"><span class="bigw">e</span><b>من غير علامة</b><span class="ipa">/ə/</span></div>
+            <p style="margin-top:6px"><b>خفيفة أو ساكتة:</b> «أَ» خفيفة ومهموسة زي <span class="fr">le, je, petit</span>، وفي آخر الكلمة غالبًا ساكتة زي <span class="fr">table</span>.</p>
+            <div class="chips" dir="ltr"><button type="button" class="chip plain" data-say="le">le</button><button type="button" class="chip plain" data-say="je">je</button><button type="button" class="chip plain" data-say="petit">petit</button><button type="button" class="chip plain" data-say="la table">table</button></div></div>
+        </div>
+        <div class="callout">جرّب قدام المراية: مع <b>é</b> الفك ثابت ومبتسم، ومع <b>è / ê</b> الفك بينزل.</div>
+      </div>
+      <div class="box">
+        <h3>ميّز بودنك: أزواج كلمات</h3>
+        <p class="hint">كل زوج كلمتين، الفرق بينهم /e/ ولا /ɛ/ بس. اسمع واختار الكلمة اللي اتقالت.</p>
+        <div class="gal" id="mpList" style="grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr))"></div>
+        <div class="row" style="justify-content:space-between;margin-top:14px"><button class="spk" id="mpPlay" aria-label="اسمع"></button><span class="cnt" id="mpScore">0 / 0</span></div>
+        <div class="choice" id="mpOpts" style="margin-top:10px"></div>
+        <div class="cfb" id="mpfb" style="margin-top:10px"></div>
       </div>
       <div class="box">
         <div class="row" style="justify-content:space-between"><button class="spk" id="sPlay" aria-label="اسمع"></button><span class="cnt" id="sScore">0 / 0</span></div>
@@ -1154,6 +1182,35 @@ input[type=text] { font: inherit; font-family: var(--font-fr); font-size: 1.4rem
     });
   });
   nextS();
+
+  /* ---------- é / è minimal pairs ---------- */
+  var MP = [["et","و","est","يكون"],["les","الـ (جمع)","lait","لبن"],["fée","جنية","fait","عمل / حقيقة"],["mes","بتوعي","mais","لكن"],["été","صيف / كان","était","كان"]];
+  $('#mpList').innerHTML = MP.map(function (p) {
+    return '<div class="pc" style="flex-direction:row;justify-content:center;gap:10px;direction:ltr">' +
+      '<button type="button" class="chip plain" data-say="' + p[0] + '">' + p[0] + ' <small>/e/</small></button>' +
+      '<button type="button" class="chip plain" data-say="' + p[2] + '">' + p[2] + ' <small>/ɛ/</small></button></div>';
+  }).join('');
+  $('#mpPlay').innerHTML = ICON;
+  var mQ = null, mOk = 0, mTot = 0;
+  function nextM() {
+    var p = rnd(MP), pick = Math.random() < .5 ? 0 : 2;
+    mQ = { p: p, a: p[pick], done: false };
+    $('#mpOpts').innerHTML = [0, 2].map(function (k) { return '<button class="btn fr" style="font-size:1.4rem" data-m="' + p[k] + '">' + p[k] + '<br><small style="font-family:var(--font-ar);font-size:.8rem;color:var(--muted)">' + p[k + 1] + '</small></button>'; }).join('');
+    $('#mpfb').textContent = 'اضغط زرار الصوت واسمع';  $('#mpfb').className = 'cfb';
+  }
+  $('#mpPlay').addEventListener('click', function () { say(mQ.a); });
+  $('#mpOpts').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-m]'); if (!b) return;
+    if (mQ.done) { nextM(); say(mQ.a); return; }
+    mQ.done = true; mTot++;
+    var ok = b.getAttribute('data-m') === mQ.a; if (ok) mOk++;
+    $('#mpOpts').querySelectorAll('[data-m]').forEach(function (x) { if (x.getAttribute('data-m') === mQ.a) x.classList.add('ok'); else if (x === b) x.classList.add('no'); });
+    var snd = mQ.a === mQ.p[0] ? '/e/ زي «بيت»' : '/ɛ/ زي bed';
+    $('#mpfb').textContent = (ok ? '✓ صح' : '✗ لأ') + ' — كانت \u2066' + mQ.a + '\u2069 ' + snd + ' · اضغط أي اختيار للي بعدها';
+    $('#mpfb').className = 'cfb ' + (ok ? 'good' : 'bad');
+    $('#mpScore').textContent = mOk + ' / ' + mTot; say(mQ.a);
+  });
+  nextM();
 
   /* ---------- verbs ---------- */
   var V1 = [["préparer","يحضّر"],["porter","يحمل / يرتدي"],["jouer","يلعب"],["chanter","يغني"],["danser","يرقص"],["marcher","يمشي"],["étudier","يدرس"],["travailler","يعمل"],["regarder","ينظر إلى / يشاهد"],["trouver","يجد"],["chercher","يبحث عن"],["donner","يعطي"],["entrer","يدخل"],["rester","يبقى"],["quitter","يغادر / يترك"],["laisser","يترك / يسمح"],["commencer","يبدأ"],["continuer","يواصل"],["aimer","يحب"],["adorer","يعشق"],["arriver","يصل"],["apporter","يحضر / يجلب"],["appeler","ينادي / يتصل بـ"],["acheter","يشتري"],["aider","يساعد"],["ajouter","يضيف"],["habiter","يسكن"],["parler","يتحدث"],["demander","يطلب"],["écouter","يستمع إلى"]];
