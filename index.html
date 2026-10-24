@@ -325,9 +325,9 @@ input[type=text] { font: inherit; font-family: var(--font-fr); font-size: 1.4rem
       <div class="box">
         <div class="chips" style="margin-top:0;justify-content:center" id="vow5"></div>
         <div class="grid2" style="margin-top:14px;grid-template-columns:repeat(3,1fr)">
-          <div class="panel" style="text-align:center"><div class="bigw">é</div><b class="fr">accent aigu</b><p class="hint">/e/ مقفولة</p></div>
-          <div class="panel" style="text-align:center"><div class="bigw">è</div><b class="fr">accent grave</b><p class="hint">/ɛ/ مفتوحة</p></div>
-          <div class="panel" style="text-align:center"><div class="bigw">ê</div><b class="fr">accent circonflexe</b><p class="hint">/ɛ/ مفتوحة</p></div>
+          <button type="button" class="panel pc" data-say="é, le café" style="text-align:center;font:inherit;color:inherit"><div class="bigw">é</div><b class="fr">accent aigu</b><p class="hint">/e/ مقفولة</p><span class="fr" style="color:var(--say)">le café 🔊</span></button>
+          <button type="button" class="panel pc" data-say="è, la mère" style="text-align:center;font:inherit;color:inherit"><div class="bigw">è</div><b class="fr">accent grave</b><p class="hint">/ɛ/ مفتوحة</p><span class="fr" style="color:var(--say)">la mère 🔊</span></button>
+          <button type="button" class="panel pc" data-say="ê, la fête" style="text-align:center;font:inherit;color:inherit"><div class="bigw">ê</div><b class="fr">accent circonflexe</b><p class="hint">/ɛ/ مفتوحة</p><span class="fr" style="color:var(--say)">la fête 🔊</span></button>
         </div>
       </div>
       <div class="stack" id="sames"></div>
@@ -712,25 +712,46 @@ input[type=text] { font: inherit; font-family: var(--font-fr); font-size: 1.4rem
     try { window.speechSynthesis.onvoiceschanged = loadVoices; } catch (e) {}
   }
   function note(msg) { var s = $('status'); s.textContent = msg; s.hidden = false; }
-  function say(text, el) {
-    if (!('speechSynthesis' in window)) { note('المتصفح ده مش بيدعم النطق الصوتي.'); return; }
+  function pickFr() {
+    if (!voices.length) loadVoices();
+    var best = null;
+    for (var i = 0; i < voices.length; i++) {
+      var l = voices[i].lang || '';
+      if (/^fr[-_]FR/i.test(l)) return voices[i];
+      if (!best && /^fr/i.test(l)) best = voices[i];
+    }
+    return best;
+  }
+  /* backup: online French voice as a normal audio file */
+  function audioFallback(text) {
     try {
-      window.speechSynthesis.cancel();
+      var a = new Audio('https://translate.google.com/translate_tts?ie=UTF-8&tl=fr&client=tw-ob&q=' + encodeURIComponent(text.slice(0, 190)));
+      a.play().catch(function () { note('الصوت مش شغال هنا. افتح الموقع في Safari أو Chrome، واتأكد إن الموبايل مش على الصامت.'); });
+    } catch (e) {}
+  }
+  function say(text, el) {
+    if (el) {
+      el.classList.add('playing');
+      var off = function () { el.classList.remove('playing'); };
+      setTimeout(off, 3500);
+    }
+    if (!('speechSynthesis' in window)) { audioFallback(text); return; }
+    try {
+      var ss = window.speechSynthesis;
+      var v = pickFr();
+      if (!v && voices.length) { audioFallback(text); return; } /* device has no French voice */
+      if (ss.speaking || ss.pending) ss.cancel();
       var u = new SpeechSynthesisUtterance(text);
       u.lang = 'fr-FR';
       u.rate = 0.8;
-      var v = null;
-      for (var i = 0; i < voices.length; i++) { if (/^fr/i.test(voices[i].lang)) { v = voices[i]; break; } }
-      if (v) { u.voice = v; }
-      else if (voices.length && !warned) { warned = true; note('مش لاقي صوت فرنسي على جهازك. نزّله من إعدادات لغة الجهاز وجرّب تاني.'); }
-      if (el) {
-        el.classList.add('playing');
-        var off = function () { el.classList.remove('playing'); };
-        u.onend = off; u.onerror = off;
-        setTimeout(off, 3500);
-      }
-      setTimeout(function () { try { window.speechSynthesis.speak(u); } catch (e2) {} }, 60);
-    } catch (e) { note('الصوت مش شغال في المتصفح ده.'); }
+      if (v) u.voice = v;
+      var started = false;
+      u.onstart = function () { started = true; };
+      u.onerror = function (e) { if (!started && e.error !== 'interrupted' && e.error !== 'canceled') audioFallback(text); };
+      if (el) { u.onend = function () { el.classList.remove('playing'); }; }
+      ss.speak(u); /* must run right inside the tap for iPhone */
+      if (ss.paused) ss.resume();
+    } catch (e) { audioFallback(text); }
   }
   window.say = say;
   document.addEventListener('click', function (e) {
@@ -1033,7 +1054,8 @@ input[type=text] { font: inherit; font-family: var(--font-fr); font-size: 1.4rem
     ['7', 'eu ≈ e', '/ø/', ['deux', 'peu', 'bleu', 'cheveux']],
     ['8', 'o = au = eau', '/o/', ['moto', 'auto', 'chaud', 'eau', 'beau']]
   ];
-  $('#vow5').innerHTML = ['a', 'e', 'i', 'o', 'u'].map(function (v) { return '<button type="button" class="chip plain" data-say="' + v + '" style="font-size:1.6rem">' + v.toUpperCase() + '</button>'; }).join('');
+  var VSAY = { a: 'a', e: 'euh', i: 'i', o: 'oh', u: 'u' }; /* a lone "e" is skipped by some voices */
+  $('#vow5').innerHTML = ['a', 'e', 'i', 'o', 'u'].map(function (v) { return '<button type="button" class="chip plain" data-say="' + VSAY[v] + '" style="font-size:1.6rem">' + v.toUpperCase() + '</button>'; }).join('');
   $('#sames').innerHTML = SAME.map(function (g) {
     return '<div class="panel grp"><div class="big">' + g[0] + '</div><div style="flex:1;min-width:0"><div class="row" style="justify-content:space-between"><b class="fr" style="font-size:1.3rem">' + g[1] + '</b><span class="hint"><span class="ipa">' + g[2] + '</span></span></div>' +
       '<div class="chips" style="margin-top:8px">' + g[3].map(function (w) { return '<button type="button" class="chip plain" data-say="' + w + '">' + w + '</button>'; }).join('') + '</div></div></div>';
