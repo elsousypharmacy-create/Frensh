@@ -138,7 +138,12 @@ h3 { font-weight: 800; font-size: 1.05rem; }
 
 /* ===== tabs + new lessons ===== */
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--paper); }
-nav.tabs { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--paper); padding-block: 8px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+.navs { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--paper); padding-block: 8px; display: flex; flex-direction: column; gap: 8px; }
+nav.lessons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+nav.lessons button { border: 1.5px solid var(--line); background: var(--card); border-radius: 12px; padding: 6px 4px; font-weight: 800; line-height: 1.3; }
+nav.lessons button small { display: block; font-weight: 600; font-size: .75rem; color: var(--muted); }
+nav.lessons button[aria-pressed="true"] { border-color: var(--say); background: var(--say-bg); color: var(--say); }
+nav.tabs { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
 nav.tabs button { flex: none; border: 1px solid var(--line); background: var(--card); padding: 6px 13px; border-radius: 999px; font-weight: 600; font-size: .92rem; }
 nav.tabs button[aria-selected="true"] { background: var(--say); color: var(--card); border-color: var(--say); }
 .tab { display: flex; flex-direction: column; gap: 30px; }
@@ -216,6 +221,21 @@ input[type=text] { font: inherit; font-family: var(--font-fr); font-size: 1.4rem
 .res span { color: var(--muted); font-size: .8rem; }
 .rec { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
 .rec audio { width: 100%; margin-top: 8px; }
+.pic { position: relative; display: inline-grid; place-items: center; width: var(--s, 56px); height: var(--s, 56px); flex: none; }
+.pic img { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; }
+.pic.ok img { opacity: 1; }
+.pic.ok .emo { visibility: hidden; }
+.pic .emo { font-size: calc(var(--s, 56px) * .78); line-height: 1; animation: bob 2.4s ease-in-out infinite; }
+@keyframes bob { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-6%) rotate(-4deg); } }
+.gal { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 112px), 1fr)); gap: 10px; margin-top: 12px; }
+.pc { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 6px; background: var(--paper); border: 1px solid var(--line); border-radius: 14px; text-align: center; min-width: 0; }
+.pc:hover { border-color: var(--say); }
+.pc.playing { border-color: var(--say); background: var(--say-bg); }
+.pc .w { font-family: var(--font-fr); font-size: 1.15rem; direction: ltr; line-height: 1.2; overflow-wrap: anywhere; }
+.pc .m { font-size: .78rem; color: var(--muted); line-height: 1.3; }
+.writer .stage { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 12px 0; }
+.writer .answer { font-family: var(--font-fr); font-size: 2rem; color: var(--ok); direction: ltr; min-height: 2.6rem; }
+@media (prefers-reduced-motion: reduce) { .pic .emo { animation: none; } }
 .chip small { font-family: var(--font-ar); font-size: .8rem; color: var(--muted); direction: rtl; }
 .ptext { font-family: var(--font-fr); font-size: 1.2rem; direction: ltr; line-height: 1.6; flex: 1; min-width: 0; }
 .ptext .rl { margin: 0 1px; }
@@ -252,20 +272,30 @@ input[type=text] { font: inherit; font-family: var(--font-fr); font-size: 1.4rem
     <p class="status" id="status" role="status" hidden></p>
   </header>
 
-  <nav class="tabs" role="tablist" aria-label="الدروس">
-    <button role="tab" data-t="t-plan">خطة اليوم</button>
-    <button role="tab" data-t="t-voy" aria-selected="true">الدرس ١: الحروف المتحركة</button>
-    <button role="tab" data-t="t-pron">النطق</button>
-    <button role="tab" data-t="t-syl">Syllabes</button>
-    <button role="tab" data-t="t-sons">é و è</button>
-    <button role="tab" data-t="t-verbs">الأفعال</button>
-    <button role="tab" data-t="t-art">Le · La · L'</button>
-    <button role="tab" data-t="t-conj">التصريف</button>
-    <button role="tab" data-t="t-ae">avoir · être</button>
-    <button role="tab" data-t="t-phrase">الجملة</button>
-    <button role="tab" data-t="t-read">قراءة</button>
-    <button role="tab" data-t="t-test">اختبار شامل</button>
-  </nav>
+  <div class="navs">
+    <nav class="lessons" aria-label="الدروس">
+      <button data-l="1">الدرس ١ <small>18 أكتوبر</small></button>
+      <button data-l="2">الدرس ٢ <small>21 أكتوبر</small></button>
+      <button data-l="0">خطة اليوم <small>والمصادر</small></button>
+    </nav>
+    <nav class="tabs" role="tablist" aria-label="أجزاء الدرس">
+      <button role="tab" data-l="1" data-t="t-voy">الحروف المتحركة</button>
+      <button role="tab" data-l="1" data-t="t-sons">é و è</button>
+      <button role="tab" data-l="1" data-t="t-h">حرف H</button>
+      <button role="tab" data-l="1" data-t="t-art"><span dir="ltr">Le · La · L'</span></button>
+      <button role="tab" data-l="1" data-t="t-syl">Syllabes</button>
+      <button role="tab" data-l="1" data-t="t-read1">قراءة</button>
+      <button role="tab" data-l="1" data-t="t-test">اختبار الدرس ١</button>
+      <button role="tab" data-l="2" data-t="t-pron">الحروف الساكتة</button>
+      <button role="tab" data-l="2" data-t="t-read2">القراءة بالقواعد</button>
+      <button role="tab" data-l="2" data-t="t-verbs">الأفعال</button>
+      <button role="tab" data-l="2" data-t="t-conj">التصريف</button>
+      <button role="tab" data-l="2" data-t="t-ae">avoir · être</button>
+      <button role="tab" data-l="2" data-t="t-phrase">الجملة</button>
+      <button role="tab" data-l="2" data-t="t-test">اختبار الدرس ٢</button>
+      <button role="tab" data-l="0" data-t="t-plan">خطة اليوم والمصادر</button>
+    </nav>
+  </div>
 
   <div class="tab" id="t-plan" hidden>
     <section>
@@ -361,20 +391,6 @@ input[type=text] { font: inherit; font-family: var(--font-fr); font-size: 1.4rem
     </div>
   </section>
 
-  <section id="r3">
-    <div class="sec-head">
-      <span class="tag">القاعدة ٣</span>
-      <h2>الحرف H</h2>
-      <p>الـ h عمره ما بيتنطق. بس فيه نوعين، والفرق بينهم في الربط (liaison) والاختصار (l').<br><b>h aspiré:</b> <span class="fr">pas d'élision / pas de liaison</span> · <b>h muet:</b> <span class="fr">élision / liaison</span></p>
-    </div>
-    <div class="stack">
-      <h3>h muet: يتعامل كأنه حرف متحرك</h3>
-      <div class="grid2" id="h-muet"></div>
-      <h3>h aspiré: يتعامل كأنه حرف ساكن</h3>
-      <div class="grid2" id="h-asp"></div>
-    </div>
-  </section>
-
   <section id="r4">
     <div class="sec-head">
       <span class="tag">اختبر نفسك</span>
@@ -414,6 +430,24 @@ input[type=text] { font: inherit; font-family: var(--font-fr); font-size: 1.4rem
     </section>
   </div>
 
+  <!-- H -->
+  <div class="tab" id="t-h" hidden>
+  <section id="r3">
+    <div class="sec-head">
+      <span class="tag">الدرس ١</span>
+      <h2>الحرف H</h2>
+      <p>الـ h عمره ما بيتنطق. بس فيه نوعين، والفرق بينهم في الربط (liaison) والاختصار (l').<br><b>h aspiré:</b> <span class="fr">pas d'élision / pas de liaison</span> · <b>h muet:</b> <span class="fr">élision / liaison</span></p>
+    </div>
+    <div class="stack">
+      <h3>h muet: يتعامل كأنه حرف متحرك</h3>
+      <div class="grid2" id="h-muet"></div>
+      <h3>h aspiré: يتعامل كأنه حرف ساكن</h3>
+      <div class="grid2" id="h-asp"></div>
+    </div>
+  </section>
+
+  </div>
+
   <!-- é / è -->
   <div class="tab" id="t-sons" hidden>
     <section>
@@ -428,9 +462,10 @@ input[type=text] { font: inherit; font-family: var(--font-fr); font-size: 1.4rem
         <div class="choice"><button class="btn" data-s="e"><span class="fr">é</span> — /e/ مقفول</button><button class="btn" data-s="E"><span class="fr">è</span> — /ɛ/ مفتوح</button></div>
         <div class="cfb" id="sfb" style="margin-top:10px"></div>
       </div>
+      <div class="box"><h3>شوف الصورة واكتب الكلمة</h3><p class="hint">خلي بالك من الأكسان: é ولا è.</p><div class="writer" id="wSons"></div></div>
       <div class="grid2" style="margin-top:18px">
-        <div class="panel"><h3 class="fr" style="text-align:right">1. É (aigu) → /e/</h3><div class="chips" id="lE"></div></div>
-        <div class="panel"><h3 class="fr" style="text-align:right">2. È (grave) → /ɛ/</h3><div class="chips" id="lG"></div></div>
+        <div class="panel"><h3 class="fr" style="text-align:right">1. É (aigu) → /e/</h3><div class="gal" id="lE"></div></div>
+        <div class="panel"><h3 class="fr" style="text-align:right">2. È (grave) → /ɛ/</h3><div class="gal" id="lG"></div></div>
       </div>
     </section>
   </div>
@@ -453,6 +488,8 @@ input[type=text] { font: inherit; font-family: var(--font-fr); font-size: 1.4rem
         <div class="card" id="fc" tabindex="0" role="button"></div>
         <div class="choice"><button class="btn no" id="again">لسه مش حافظه</button><button class="btn ok" id="know">حافظه ✓</button></div>
       </div>
+      <div class="box"><h3>شوف الصورة واكتب الفعل</h3><p class="hint">اكتب الفعل في المصدر، زي <span class="fr">parler</span>.</p><div class="writer" id="wVerbs"></div></div>
+      <div class="box"><h3>كل الأفعال</h3><div class="gal" id="vGal"></div></div>
     </section>
   </div>
 
@@ -473,6 +510,7 @@ input[type=text] { font: inherit; font-family: var(--font-fr); font-size: 1.4rem
         </div>
         <div class="cfb" id="afb" style="margin-top:10px"></div>
       </div>
+      <div class="box"><h3>شوف الصورة واكتب الكلمة</h3><p class="hint">اكتب الأداة مع الكلمة، زي <span class="fr">la table</span> أو <span class="fr">l'école</span>.</p><div class="writer" id="wArt"></div></div>
       <div class="callout">
         نصايح بتساعد (مش قاعدة 100%):<br>
         • الأسماء اللي بتنتهي بـ <span class="fr">-age</span> غالبًا مذكر: <span class="fr">le village, le voyage, le fromage, le message</span><br>
@@ -480,10 +518,10 @@ input[type=text] { font: inherit; font-family: var(--font-fr); font-size: 1.4rem
         • مع <span class="fr">L'</span> مش هتعرف الجنس من الأداة، فاحفظها كمان مع <span class="fr">un / une</span>.
       </div>
       <div class="grid2" style="margin-top:18px">
-        <div class="panel art-col"><h3><span class="fr">La</span> — المؤنث</h3><div class="chips" id="artLa"></div></div>
-        <div class="panel art-col"><h3><span class="fr">Le</span> — المذكر</h3><div class="chips" id="artLe"></div></div>
+        <div class="panel art-col"><h3><span class="fr">La</span> — المؤنث</h3><div class="gal" id="artLa"></div></div>
+        <div class="panel art-col"><h3><span class="fr">Le</span> — المذكر</h3><div class="gal" id="artLe"></div></div>
       </div>
-      <div class="panel art-col" style="margin-top:14px"><h3><span class="fr">L'</span> — قبل حرف متحرك أو h muet</h3><div class="chips" id="artL"></div>
+      <div class="panel art-col" style="margin-top:14px"><h3><span class="fr">L'</span> — قبل حرف متحرك أو h muet</h3><div class="gal" id="artL"></div>
         <p class="hint" style="margin-top:10px">ملاحظة: <span class="fr">l'histoire</span> ممكن تعني «التاريخ» أو «القصة» حسب الجملة.</p></div>
     </section>
   </div>
@@ -594,14 +632,13 @@ input[type=text] { font: inherit; font-family: var(--font-fr); font-size: 1.4rem
     </section>
   </div>
 
-  <!-- reading -->
-  <div class="tab" id="t-read" hidden>
+  <!-- reading lesson 1 -->
+  <div class="tab" id="t-read1" hidden>
     <section>
       <div class="sec-head">
-        <span class="tag">القراءة</span>
-        <h2>اقرا في مجموعات (groupes de souffle)</h2>
-        <p>جمل تمرين مبنية على أمثلة المدام. اسمع الجملة، وبعدين اقراها بصوت عالي وطبّق العلامات. المهم النطق الصح مش السرعة.</p>
-        <div class="lg2"><span><b class="rs">x</b> ساكت</span><span><b class="rn">an</b> أنفي</span><span><b class="rl">‿</b> ربط</span><span><b class="ry">u</b> = [y]</span><span><b class="ru">ou</b> = [u]</span></div>
+        <span class="tag">الدرس ١ · القراءة</span>
+        <h2>نصوص للقراءة</h2>
+        <p>اقرا كل نص ٤ مرات: ببطء ← بنطق صح ← طبيعي ← سجّل نفسك. تقدر تسمع كل جملة لوحدها، والعلامة <span class="rl">‿</span> معناها اربط.</p>
       </div>
       <div class="callout">
         <b>ركّز في النصين على الحاجات دي:</b> الرقم بيتربط مع <span class="fr">heures</span>، والـ f في neuf بتتنطق v، والـ d في quand بتتنطق t.
@@ -609,7 +646,33 @@ input[type=text] { font: inherit; font-family: var(--font-fr); font-size: 1.4rem
       </div>
       <div class="box"><h3>Texte 1 — Sylvie</h3><div id="txt1"></div></div>
       <div class="box"><h3>Texte 2 — Jade</h3><div id="txt2"></div></div>
-      <div class="box"><h3>جمل تمرين بالعلامات</h3><div id="sents"></div></div>
+    </section>
+  </div>
+
+  <!-- reading lesson 2 -->
+  <div class="tab" id="t-read2" hidden>
+    <section>
+      <div class="sec-head">
+        <span class="tag">الدرس ٢ · القراءة</span>
+        <h2>اقرا في مجموعات (groupes de souffle)</h2>
+        <p>الهدف مش السرعة. الهدف إنك تقرا بنطق صح وطلاقة وانت مطبّق قواعد الفونيتيك.</p>
+      </div>
+      <div class="box">
+        <h3>ركّز وانت بتقرا على:</h3>
+        <div class="stack" style="gap:10px;margin-top:10px">
+          <div>• <b>الحروف الساكتة في آخر الكلمة:</b> <span class="fr">Pierre, petit, grand, huit, monde</span></div>
+          <div>• <b>e muet:</b> <span class="fr">petite</span></div>
+          <div>• <b>الربط (liaison) في مكانه الصح:</b> <div class="fr" style="display:block;text-align:left">est‿un · huit‿ans · dans‿un grand‿appartement · 3ᵉ‿étage · d'un‿immeuble</div></div>
+          <div>• <b>الأصوات الأنفية:</b> <span class="fr">ans, dans, grand, monde, appartement</span></div>
+          <div>• <b>الفرق بين [u] و [y]:</b> <span class="fr">tour, tout ≠ Julie</span></div>
+          <div>• <b>اقرا في مجموعات كلام</b> مش كلمة كلمة.</div>
+        </div>
+      </div>
+      <div class="box">
+        <h3>جمل تمرين بالعلامات</h3>
+        <div class="lg2"><span><b class="rs">x</b> ساكت</span><span><b class="rn">an</b> أنفي</span><span><b class="rl">‿</b> ربط</span><span><b class="ry">u</b> = [y]</span><span><b class="ru">ou</b> = [u]</span></div>
+        <div id="sents"></div>
+      </div>
     </section>
   </div>
 
@@ -617,9 +680,9 @@ input[type=text] { font: inherit; font-family: var(--font-fr); font-size: 1.4rem
   <div class="tab" id="t-test" hidden>
     <section>
       <div class="sec-head">
-        <span class="tag">اختبار شامل</span>
-        <h2>على كل اللي اتشرح لحد دلوقتي</h2>
-        <p>نطق، ربط، تصريف، avoir و être، وتركيب الجملة.</p>
+        <span class="tag" id="testTag">اختبار</span>
+        <h2 id="testTitle"></h2>
+        <p id="testSub"></p>
       </div>
       <div class="box">
         <div class="row" style="justify-content:space-between"><span class="cnt" id="qNum"></span><span class="cnt" id="qScore"></span></div>
@@ -835,17 +898,80 @@ input[type=text] { font: inherit; font-family: var(--font-fr); font-size: 1.4rem
   };
   document.querySelectorAll('.spk').forEach(function (b) { b.innerHTML = ICON; });
 
-  /* tabs */
-  var tabs = document.querySelectorAll('nav.tabs button');
-  function openTab(id) {
-    var found = false;
-    tabs.forEach(function (b) { var on = b.getAttribute('data-t') === id; b.setAttribute('aria-selected', on); if (on) found = true; });
-    if (!found) return;
-    document.querySelectorAll('.tab').forEach(function (t) { t.hidden = t.id !== id; });
-    store.set('tab', id);
+  /* animated pictures (Noto animated emoji, falls back to a bouncing emoji) */
+  var EMO = {
+    table:'🍽️',fenêtre:'🪟',tasse:'☕',pomme:'🍎',chaise:'🪑',voiture:'🚗',chambre:'🛏️',plage:'🏖️',musique:'🎵',nature:'🌳',peinture:'🎨',couverture:'🛌',porte:'🚪',lampe:'💡',robe:'👗',bouche:'👄',cuisine:'🍳',valise:'🧳',montagne:'⛰️',semaine:'📅',lecture:'📖',culture:'🏛️',
+    livre:'📕',village:'🏘️',voyage:'✈️',collège:'🏫',téléphone:'☎️',visage:'🙂',fromage:'🧀',costume:'🤵',musée:'🖼️',garage:'🔧',problème:'⚠️',message:'💬',silence:'🤫',paysage:'🏞️',
+    école:'🏫',image:'🖼️',île:'🏝️',arrivée:'🛬',église:'⛪',heure:'🕐',enveloppe:'✉️',oreille:'👂',énergie:'⚡',envie:'🤩',histoire:'📜',idée:'💡',adresse:'🏠',entrée:'🚪',habitude:'🔁',étoile:'⭐',épaule:'🤷',origine:'🌍',
+    élève:'🧑‍🎓',café:'☕',marché:'🛒',bébé:'👶',été:'☀️',clé:'🔑',télévision:'📺',cinéma:'🎬',métier:'👷',médecin:'🧑‍⚕️',déjeuner:'🥪',résumé:'📝',sécurité:'🔒',vérité:'✅',liberté:'🕊️',société:'👥',université:'🎓',
+    mère:'👩',père:'👨',frère:'👦',sœur:'👧',rivière:'🌊',lumière:'🔆',pièce:'🧩',crème:'🧴',manège:'🎠',planète:'🪐',règle:'📏',flèche:'🏹',fièvre:'🤒',chèvre:'🐐',zèbre:'🦓',siège:'💺',lièvre:'🐇',
+    préparer:'🍳',porter:'🎒',jouer:'⚽',chanter:'🎤',danser:'💃',marcher:'🚶',étudier:'📚',travailler:'💼',regarder:'👀',trouver:'🎯',chercher:'🔍',donner:'🎁',entrer:'🚪',rester:'🛋️',quitter:'👋',laisser:'✋',commencer:'🏁',continuer:'⏩',aimer:'❤️',adorer:'😍',arriver:'🛬',apporter:'📦',appeler:'📞',acheter:'🛍️',aider:'🤝',ajouter:'➕',habiter:'🏡',parler:'🗣️',demander:'🙋',écouter:'🎧',
+    finir:'🔚',choisir:'👉',réussir:'🏆',grandir:'🌱',grossir:'🍔',maigrir:'🥗',rougir:'😳',jaunir:'🍂',obéir:'🫡',désobéir:'🙅',réfléchir:'🤔',remplir:'🫗',bâtir:'🏗️'
+  };
+  function bare(w) { return w.replace(/^(le |la |l')/, ''); }
+  function emo(w) { return EMO[bare(w)] || '🔤'; }
+  function pic(e, size) {
+    var cp = Array.from(e).map(function (c) { return c.codePointAt(0).toString(16); }).filter(function (c) { return c !== 'fe0f'; }).join('_');
+    return '<span class="pic" style="--s:' + (size || 56) + 'px"><img alt="" loading="lazy" src="https://fonts.gstatic.com/s/e/notoemoji/latest/' + cp + '/512.webp" onload="this.parentNode.classList.add(\'ok\')"><span class="emo" aria-hidden="true">' + e + '</span></span>';
   }
-  tabs.forEach(function (b) { b.addEventListener('click', function () { openTab(b.getAttribute('data-t')); }); });
-  openTab(location.hash.slice(1) || store.get('tab', 't-plan'));
+  function card(fr, ar) { return '<button type="button" class="pc" data-say="' + fr + '">' + pic(emo(fr)) + '<span class="w">' + fr + '</span><span class="m">' + ar + '</span></button>'; }
+
+  /* write-the-word trainer */
+  function writer(el, items) {
+    var cur = null, done = false, ok = 0, tot = 0;
+    el.innerHTML = '<div class="row" style="justify-content:flex-end"><span class="cnt"></span></div><div class="stage"></div>' +
+      '<input type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="اكتب هنا…" aria-label="اكتب الكلمة">' +
+      '<div class="acc"><button>é</button><button>è</button><button>ê</button><button>à</button><button>â</button><button>î</button><button>ç</button><button>œ</button><button>\'</button></div>' +
+      '<div class="cfb"></div><div class="choice"><button class="btn sk">مش عارف، ورّيني</button><button class="btn pri ck">صحّح</button></div>';
+    var inp = el.querySelector('input'), fb = el.querySelector('.cfb'), st = el.querySelector('.stage'), cnt = el.querySelector('.cnt');
+    function next() {
+      cur = rnd(items); done = false; inp.value = ''; fb.textContent = ''; fb.className = 'cfb';
+      st.innerHTML = pic(emo(cur[0]), 96) + '<div class="ar">' + cur[1] + '</div><button type="button" class="spk" data-say="' + cur[0] + '" aria-label="اسمع">' + ICON + '</button><div class="answer"></div>';
+    }
+    function norm(x) { return x.trim().toLowerCase().replace(/[’`]/g, "'").replace(/\s+/g, ' ').replace(/' /g, "'"); }
+    function strip(x) { return x.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+    function reveal(good, msg) {
+      done = true; tot++; if (good) ok++;
+      st.querySelector('.answer').textContent = cur[0];
+      fb.textContent = msg; fb.className = 'cfb ' + (good ? 'good' : 'bad');
+      cnt.textContent = ok + ' / ' + tot; say(cur[0]);
+      el.querySelector('.ck').textContent = 'اللي بعدها';
+    }
+    function check() {
+      if (done) { next(); el.querySelector('.ck').textContent = 'صحّح'; inp.focus(); return; }
+      var a = norm(inp.value); if (!a) return;
+      var t = norm(cur[0]);
+      if (a === t) reveal(true, '✓ برافو، اكتبها كمان مرتين في الكشكول.');
+      else if (strip(a) === strip(t)) reveal(true, '✓ صح، بس الأكسان: ' + cur[0]);
+      else reveal(false, '✗ الصح مكتوب فوق. اكتبها 3 مرات وجرّب اللي بعدها.');
+    }
+    el.querySelector('.ck').addEventListener('click', check);
+    el.querySelector('.sk').addEventListener('click', function () { if (!done) reveal(false, 'دي الكلمة. انطقها واكتبها 3 مرات.'); });
+    inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') check(); });
+    el.querySelectorAll('.acc button').forEach(function (b) { b.addEventListener('click', function () { inp.value += b.textContent; inp.focus(); }); });
+    next();
+  }
+
+  /* lessons + tabs */
+  var tabs = document.querySelectorAll('nav.tabs button'), lbtns = document.querySelectorAll('nav.lessons button');
+  var curL = '1';
+  function openTab(id, l) {
+    var btn = null;
+    tabs.forEach(function (b) { if (b.getAttribute('data-t') === id && (!l || b.getAttribute('data-l') === l) && !btn) btn = b; });
+    if (!btn) return false;
+    curL = btn.getAttribute('data-l');
+    lbtns.forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-l') === curL); });
+    tabs.forEach(function (b) { b.hidden = b.getAttribute('data-l') !== curL; b.setAttribute('aria-selected', b === btn); });
+    document.querySelectorAll('.tab').forEach(function (t) { t.hidden = t.id !== id; });
+    if (id === 't-test' && window.startLessonQuiz) window.startLessonQuiz(curL);
+    store.set('tab', id); store.set('lesson', curL); store.set('tab' + curL, id);
+    return true;
+  }
+  tabs.forEach(function (b) { b.addEventListener('click', function () { openTab(b.getAttribute('data-t'), b.getAttribute('data-l')); }); });
+  lbtns.forEach(function (b) { b.addEventListener('click', function () {
+    var l = b.getAttribute('data-l'), first = document.querySelector('nav.tabs button[data-l="' + l + '"]').getAttribute('data-t');
+    if (!openTab(store.get('tab' + l, first), l)) openTab(first, l);
+  }); });
 
   /* ---------- daily plan ---------- */
   var PLAN = [
@@ -994,8 +1120,9 @@ input[type=text] { font: inherit; font-family: var(--font-fr); font-size: 1.4rem
   var E = [["l'école","المدرسة"],["l'élève","التلميذ / التلميذة"],["le café","المقهى"],["le marché","السوق"],["le bébé","الرضيع"],["l'été","الصيف"],["la clé","المفتاح"],["la télévision","التلفاز"],["le téléphone","الهاتف"],["le cinéma","السينما"],["le métier","المهنة"],["le médecin","الطبيب"],["le déjeuner","الغداء"],["le résumé","الملخص"],["la sécurité","الأمان"],["la vérité","الحقيقة"],["la liberté","الحرية"],["la société","المجتمع"],["l'énergie","الطاقة"],["l'université","الجامعة"]];
   var G = [["la mère","الأم"],["le père","الأب"],["le frère","الأخ"],["la sœur","الأخت"],["la rivière","النهر"],["la lumière","الضوء"],["la pièce","الغرفة / القطعة"],["la crème","الكريمة"],["le problème","المشكلة"],["le collège","المدرسة الإعدادية"],["le manège","الملاهي الدوّارة"],["la planète","الكوكب"],["la règle","القاعدة / المسطرة"],["la flèche","السهم"],["la fièvre","الحمى"],["la chèvre","الماعز"],["le zèbre","الحمار الوحشي"],["le siège","المقعد"],["le lièvre","الأرنب البري"]];
   var GQ = G.filter(function (x) { return x[0] !== 'la sœur'; });
-  function chips(a) { return a.map(function (w) { return '<button type="button" class="chip plain" data-say="' + w[0] + '">' + w[0] + ' <small>' + w[1] + '</small></button>'; }).join(''); }
+  function chips(a) { return a.map(function (w) { return card(w[0], w[1]); }).join(''); }
   $('#lE').innerHTML = chips(E); $('#lG').innerHTML = chips(G);
+  writer($('#wSons'), E.concat(G));
   var sQ = null, sOk = 0, sTot = 0;
   function nextS() {
     var isE = Math.random() < .5;
@@ -1061,7 +1188,7 @@ input[type=text] { font: inherit; font-family: var(--font-fr); font-size: 1.4rem
     var g = '<span class="grpb">' + (IS2[cur[0]] ? '2e groupe' : '1er groupe') + '</span>';
     var fr = '<div class="row" style="justify-content:center"><span class="bigw">' + cur[0] + '</span><button type="button" class="spk" data-say="' + cur[0] + '" aria-label="اسمع">' + ICON + '</button></div>';
     var ar = '<div class="ar">' + cur[1] + '</div>';
-    $('#fc').innerHTML = g + (dirFr ? fr : ar) + '<div class="back" hidden>' + (dirFr ? ar : fr) + '<div class="ex">' + ex + '</div></div><span class="hint">اضغط تقلب الكارت</span>';
+    $('#fc').innerHTML = g + pic(emo(cur[0]), 84) + (dirFr ? fr : ar) + '<div class="back" hidden>' + (dirFr ? ar : fr) + '<div class="ex">' + ex + '</div></div><span class="hint">اضغط تقلب الكارت</span>';
     if (dirFr) say(cur[0]);
   }
   $('#fc').addEventListener('click', function (e) {
@@ -1075,6 +1202,8 @@ input[type=text] { font: inherit; font-family: var(--font-fr); font-size: 1.4rem
   $('#dirBtn').addEventListener('click', function () { dirFr = !dirFr; $('#dirBtn').textContent = dirFr ? 'فرنساوي ← عربي' : 'عربي ← فرنساوي'; showCard(); });
   $('#vset').addEventListener('change', function () { save(); buildDeck(); showCard(); });
   save(); buildDeck(); showCard();
+  $('#vGal').innerHTML = V1.concat(V2).map(function (v) { return card(v[0], v[1]); }).join('');
+  writer($('#wVerbs'), V1.concat(V2));
 
   /* ---------- conjugation ---------- */
   var cQ = null, cOk = 0, cTot = 0, answered = false;
@@ -1163,15 +1292,16 @@ input[type=text] { font: inherit; font-family: var(--font-fr); font-size: 1.4rem
   var LE = [["livre","الكتاب"],["village","القرية"],["voyage","الرحلة / السفر"],["collège","المدرسة الإعدادية"],["téléphone","الهاتف"],["visage","الوجه"],["fromage","الجبن"],["costume","البدلة"],["musée","المتحف"],["garage","الجراج"],["problème","المشكلة"],["message","الرسالة"],["silence","الصمت"],["paysage","المنظر الطبيعي"]];
   var LL = [["école","المدرسة"],["image","الصورة"],["île","الجزيرة"],["arrivée","الوصول"],["église","الكنيسة"],["heure","الساعة"],["enveloppe","الظرف"],["oreille","الأذن"],["énergie","الطاقة"],["envie","الرغبة"],["histoire","التاريخ / القصة"],["idée","الفكرة"],["adresse","العنوان"],["entrée","المدخل / الدخول"],["habitude","العادة"],["étoile","النجمة"],["épaule","الكتف"],["origine","الأصل"]];
   function artChips(list, art) {
-    return list.map(function (w) { var f = art === "l'" ? "l'" + w[0] : art + ' ' + w[0]; return '<button type="button" class="chip plain" data-say="' + f + '">' + f + ' <small>' + w[1] + '</small></button>'; }).join('');
+    return list.map(function (w) { var f = art === "l'" ? "l'" + w[0] : art + ' ' + w[0]; return card(f, w[1]); }).join('');
   }
   $('#artLa').innerHTML = artChips(LA, 'la'); $('#artLe').innerHTML = artChips(LE, 'le'); $('#artL').innerHTML = artChips(LL, "l'");
   var ALL = LA.map(function (w) { return [w[0], w[1], 'la']; }).concat(LE.map(function (w) { return [w[0], w[1], 'le']; }), LL.map(function (w) { return [w[0], w[1], "l'"]; }));
+  writer($('#wArt'), ALL.map(function (q) { return [q[2] === "l'" ? "l'" + q[0] : q[2] + ' ' + q[0], q[1]]; }));
   var aQ = null, aOk = 0, aTot = 0;
   function full(q) { return q[2] === "l'" ? "l'" + q[0] : q[2] + ' ' + q[0]; }
   function nextA() {
     aQ = rnd(ALL); aQ.done = false;
-    $('#aWord').innerHTML = '<div class="row" style="justify-content:center"><span class="bigw">___ ' + aQ[0] + '</span></div><span class="hint">' + aQ[1] + '</span>';
+    $('#aWord').innerHTML = pic(emo(aQ[0]), 72) + '<div class="row" style="justify-content:center"><span class="bigw">___ ' + aQ[0] + '</span></div><span class="hint">' + aQ[1] + '</span>';
     $('#afb').textContent = '';
     $('#aOpts').querySelectorAll('[data-a]').forEach(function (b) { b.classList.remove('ok', 'no'); });
   }
@@ -1181,7 +1311,7 @@ input[type=text] { font: inherit; font-family: var(--font-fr); font-size: 1.4rem
     aQ.done = true; aTot++;
     var ok = b.getAttribute('data-a') === aQ[2]; if (ok) aOk++;
     $('#aOpts').querySelectorAll('[data-a]').forEach(function (x) { if (x.getAttribute('data-a') === aQ[2]) x.classList.add('ok'); else if (x === b) x.classList.add('no'); });
-    $('#aWord').innerHTML = '<span class="bigw">' + full(aQ) + '</span><span class="hint">' + aQ[1] + '</span>';
+    $('#aWord').innerHTML = pic(emo(aQ[0]), 72) + '<span class="bigw">' + full(aQ) + '</span><span class="hint">' + aQ[1] + '</span>';
     var why = aQ[2] === "l'" ? ' — الكلمة بتبدأ بحرف متحرك أو h muet' : (aQ[2] === 'le' ? ' — مذكر' : ' — مؤنث');
     $('#afb').textContent = (ok ? '✓ صح' : '✗ الصح ' + full(aQ)) + why + ' · اضغط أي اختيار للي بعدها';
     $('#afb').className = 'cfb ' + (ok ? 'good' : 'bad');
@@ -1225,8 +1355,17 @@ input[type=text] { font: inherit; font-family: var(--font-fr); font-size: 1.4rem
     ["<span class=fr>les herbes</span> فيها ربط؟", ["أيوه: /lezɛʁb/", "لأ"], 0, "h muet: l'herbe / les‿herbes.", "les herbes"],
     ["المقطع <span class=fr>tu</span> بيتنطق…", ["زي «تو» العربي", "/ty/ بشفايف مضمومة"], 1, "u = /y/. لو عايز «تو» تكتبها tou.", "tu"]
   ];
-  var qi = 0, qOk = 0, order = [];
-  function startQ() { order = shuffle(Q); qi = 0; qOk = 0; showQ(); }
+  var L1Q = ["l'homme", "les héros", "la chaise", "le fromage", "l'heure", "neuf heures", "chez", "mais", "eau", "le hasard", "les herbes", "bè", "tu"];
+  var qi = 0, qOk = 0, order = [], qL = '1';
+  function startQ() {
+    var inL1 = function (q) { return L1Q.indexOf(q[4]) >= 0; };
+    order = shuffle(Q.filter(function (q) { return qL === '1' ? inL1(q) : !inL1(q); })); qi = 0; qOk = 0;
+    $('#testTag').textContent = qL === '1' ? 'الدرس ١' : 'الدرس ٢';
+    $('#testTitle').textContent = 'اختبار الدرس ' + (qL === '1' ? '١' : '٢');
+    $('#testSub').textContent = qL === '1' ? 'الحروف المتحركة، é و è، حرف H، le / la / l\', Syllabes، والربط في النصوص.' : 'الحروف الساكتة، الربط، الأصوات الأنفية، التصريف، avoir و être، وتركيب الجملة.';
+    showQ();
+  }
+  window.startLessonQuiz = function (l) { qL = l === '2' ? '2' : '1'; startQ(); };
   function showQ() {
     $('#qMeter').style.width = (qi / order.length * 100) + '%';
     if (qi >= order.length) {
@@ -1251,6 +1390,9 @@ input[type=text] { font: inherit; font-family: var(--font-fr); font-size: 1.4rem
   });
   $('#qNext').addEventListener('click', function () { qi++; showQ(); });
   startQ();
+
+  var h = location.hash.slice(1);
+  if (!(h && openTab(h))) { var l0 = store.get('lesson', '1'); if (!openTab(store.get('tab' + l0, 'x'), l0)) openTab('t-voy', '1'); }
 })();
 </script>
 </body>
