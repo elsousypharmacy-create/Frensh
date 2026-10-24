@@ -4,9 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#14213D">
-<title>Lettres muettes</title>
+<title>Cahier de français</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=DM+Serif+Display&display=swap">
 <style>
 :root { color-scheme: light; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
@@ -135,6 +136,92 @@ h3 { font-weight: 800; font-size: 1.05rem; }
 
 .foot { color: var(--muted); font-size: .85rem; }
 
+/* ===== tabs + new lessons ===== */
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--paper); }
+nav.tabs { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--paper); padding-block: 8px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+nav.tabs button { flex: none; border: 1px solid var(--line); background: var(--card); padding: 6px 13px; border-radius: 999px; font-weight: 600; font-size: .92rem; }
+nav.tabs button[aria-selected="true"] { background: var(--say); color: var(--card); border-color: var(--say); }
+.tab { display: flex; flex-direction: column; gap: 30px; }
+.box { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px; min-width: 0; margin-top: 18px; }
+.fr { font-family: var(--font-fr); direction: ltr; unicode-bidi: isolate; }
+.hint { color: var(--muted); font-size: .93rem; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.btn { border: 1.5px solid var(--line); background: var(--paper); padding: 9px 14px; border-radius: 12px; font-weight: 700; }
+.btn.pri { background: var(--say); border-color: var(--say); color: var(--card); }
+.btn.ok { border-color: var(--ok); color: var(--ok); }
+.btn.no { border-color: var(--sil); color: var(--sil); }
+select { font: inherit; border: 1px solid var(--line); background: var(--paper); color: var(--ink); border-radius: 10px; padding: 6px 10px; }
+.cnt { color: var(--muted); font-size: .9rem; font-variant-numeric: tabular-nums; font-weight: 600; }
+.meter { height: 6px; background: var(--line); border-radius: 6px; overflow: hidden; margin-top: 8px; }
+.meter i { display: block; height: 100%; background: var(--ok); width: 0; transition: width .3s; }
+.card { border: 1.5px dashed var(--line); border-radius: 14px; min-height: 170px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; cursor: pointer; padding: 16px; margin: 14px 0; background: var(--paper); }
+.bigw { font-family: var(--font-fr); font-size: clamp(2rem, 9vw, 2.6rem); line-height: 1.1; color: var(--say); direction: ltr; }
+.ar { font-size: 1.6rem; font-weight: 800; }
+.ex { font-family: var(--font-fr); direction: ltr; color: var(--muted); font-size: 1rem; }
+.grpb { font-size: .78rem; font-weight: 800; border-radius: 999px; padding: 0 10px; border: 1px solid var(--line); color: var(--muted); }
+.q { font-family: var(--font-fr); font-size: 1.8rem; direction: ltr; text-align: center; margin: 14px 0; line-height: 1.4; }
+.q b { color: var(--say); font-weight: 400; }
+.q small { color: var(--muted); font-size: 1.1rem; }
+input[type=text] { font: inherit; font-family: var(--font-fr); font-size: 1.4rem; direction: ltr; text-align: center; width: 100%; padding: 10px; border: 1.5px solid var(--line); border-radius: 12px; background: var(--paper); color: var(--ink); }
+.acc { display: flex; gap: 6px; justify-content: center; margin: 8px 0; flex-wrap: wrap; }
+.acc button { font-family: var(--font-fr); font-size: 1.15rem; width: 42px; height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper); }
+.cfb { min-height: 28px; text-align: center; font-weight: 700; margin-bottom: 8px; }
+.cfb.good { color: var(--ok); } .cfb.bad { color: var(--sil); }
+.tables { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); gap: 12px; margin-top: 18px; }
+.tbl { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; direction: ltr; font-family: var(--font-fr); font-size: 1.1rem; line-height: 1.75; min-width: 0; }
+.tbl h3 { font-family: var(--font-ar); font-size: .95rem; color: var(--say); direction: rtl; margin-bottom: 4px; }
+.tbl em { color: var(--sil); font-style: normal; }
+.tbl .lk { color: var(--sil); font-weight: 700; }
+.tbl sup { color: var(--sil); font-family: var(--font-ar); font-weight: 800; font-size: .7em; }
+.callout { background: var(--say-bg); border-radius: 12px; padding: 12px 14px; font-size: .95rem; margin-top: 14px; }
+.choice { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+.mopts { display: grid; gap: 8px; margin-top: 12px; }
+.mopts .btn { text-align: start; }
+.mopts .btn.right { border-color: var(--ok); background: var(--ok-bg); color: var(--ok); }
+.mopts .btn.wrong { border-color: var(--sil); background: var(--bad-bg); color: var(--sil); }
+.why { margin-top: 10px; font-size: .93rem; color: var(--muted); }
+.spk { border: 0; background: var(--say-bg); color: var(--say); width: 42px; height: 42px; border-radius: 50%; flex: none; display: inline-flex; align-items: center; justify-content: center; }
+.spk svg { width: 20px; height: 20px; }
+.sent { display: flex; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.sent:last-child { border: 0; }
+.sent p { font-family: var(--font-fr); font-size: 1.45rem; direction: ltr; flex: 1; min-width: 0; line-height: 1.5; }
+.rs { color: var(--muted); opacity: .45; }
+.rn { text-decoration: underline wavy var(--say); text-underline-offset: 6px; }
+.rl { color: var(--sil); font-weight: 700; }
+.ry { color: var(--ok); }
+.ru { color: var(--sil); }
+.lg2 { display: flex; gap: 6px 16px; flex-wrap: wrap; font-size: .9rem; font-weight: 600; margin-top: 10px; }
+.lg2 b { font-family: var(--font-fr); font-weight: 400; font-size: 1.15rem; }
+.parts { display: flex; flex-wrap: wrap; gap: 8px; direction: ltr; margin-top: 12px; }
+.part { border-radius: 12px; padding: 8px 12px; font-family: var(--font-fr); font-size: 1.25rem; border: 1.5px solid var(--line); background: var(--paper); display: flex; flex-direction: column; align-items: center; }
+.part small { font-family: var(--font-ar); font-size: .75rem; font-weight: 800; color: var(--muted); }
+.part.s1 { border-color: var(--say); } .part.s2 { border-color: var(--sil); } .part.s3 { border-color: var(--ok); }
+.gn { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; direction: ltr; }
+.gn div { font-family: var(--font-fr); font-size: 1.3rem; }
+.gn .add { color: var(--sil); }
+#vow5, #sames .chips, #sames .row { direction: ltr; }
+#sames .hint { direction: rtl; }
+.todo { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--line); cursor: pointer; }
+.todo:last-child { border: 0; }
+.todo input { width: 22px; height: 22px; accent-color: var(--ok); flex: none; margin-top: 3px; }
+.todo .t { font-weight: 700; }
+.todo .d { color: var(--muted); font-size: .9rem; }
+.todo.done .t { color: var(--muted); text-decoration: line-through; }
+.res { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr)); gap: 12px; margin-top: 12px; }
+.res a { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; text-decoration: none; color: var(--ink); background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px; min-width: 0; }
+.res a:hover { border-color: var(--say); }
+.res .qr { width: 110px; height: 110px; background: #fff; border-radius: 8px; padding: 6px; }
+.res .qr svg { width: 100%; height: 100%; display: block; }
+.res b { font-size: .95rem; }
+.res span { color: var(--muted); font-size: .8rem; }
+.rec { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+.rec audio { width: 100%; margin-top: 8px; }
+.chip small { font-family: var(--font-ar); font-size: .8rem; color: var(--muted); direction: rtl; }
+.ptext { font-family: var(--font-fr); font-size: 1.2rem; direction: ltr; line-height: 1.6; flex: 1; min-width: 0; }
+.ptext .rl { margin: 0 1px; }
+.art-col h3 .fr { font-size: 1.5rem; color: var(--say); }
+@media (max-width: 420px) { .choice { grid-template-columns: 1fr; } .box { padding: 14px; } }
+
 @media (max-width: 420px) {
   .pair { grid-template-columns: 1fr; }
   .panel { padding: 14px; }
@@ -154,9 +241,9 @@ h3 { font-weight: 800; font-size: 1.05rem; }
 <main class="wrap" dir="rtl" lang="ar">
 
   <header>
-    <p class="eyebrow">مذاكرة النطق الفرنسي</p>
-    <h1 dir="ltr">Lettres muettes</h1>
-    <p class="lede">اضغط على أي كلمة وهتسمعها. الحرف الأحمر المشطوب ساكت، والأزرق بيتنطق.</p>
+    <p class="eyebrow">مذاكرة الفرنساوي — ماتريال مدام سيلفيا</p>
+    <h1 dir="ltr">Cahier de français</h1>
+    <p class="lede">اختار الدرس من فوق. اضغط على أي كلمة فرنساوي هتسمعها. الحرف الأحمر المشطوب ساكت، والأزرق بيتنطق.</p>
     <ul class="legend">
       <li><span><i class="sil">e</i></span> ساكت</li>
       <li><span><b class="say">c</b></span> بيتنطق</li>
@@ -165,6 +252,77 @@ h3 { font-weight: 800; font-size: 1.05rem; }
     <p class="status" id="status" role="status" hidden></p>
   </header>
 
+  <nav class="tabs" role="tablist" aria-label="الدروس">
+    <button role="tab" data-t="t-plan">خطة اليوم</button>
+    <button role="tab" data-t="t-voy" aria-selected="true">الدرس ١: الحروف المتحركة</button>
+    <button role="tab" data-t="t-pron">النطق</button>
+    <button role="tab" data-t="t-syl">Syllabes</button>
+    <button role="tab" data-t="t-sons">é و è</button>
+    <button role="tab" data-t="t-verbs">الأفعال</button>
+    <button role="tab" data-t="t-art">Le · La · L'</button>
+    <button role="tab" data-t="t-conj">التصريف</button>
+    <button role="tab" data-t="t-ae">avoir · être</button>
+    <button role="tab" data-t="t-phrase">الجملة</button>
+    <button role="tab" data-t="t-read">قراءة</button>
+    <button role="tab" data-t="t-test">اختبار شامل</button>
+  </nav>
+
+  <div class="tab" id="t-plan" hidden>
+    <section>
+      <div class="sec-head">
+        <span class="tag">طريقة مدام سيلفيا · ساعتين في اليوم</span>
+        <h2>اسمع ← افهم القاعدة ← اقرا ← كرّر ← طبّق</h2>
+        <p>علّم على اللي خلصته النهارده. العلامات بتتمسح لوحدها تاني يوم.</p>
+      </div>
+      <div class="box">
+        <div class="row" style="justify-content:space-between"><b id="planDate"></b><span class="cnt" id="planCnt"></span></div>
+        <div class="meter"><i id="planMeter"></i></div>
+        <div id="plan" style="margin-top:8px"></div>
+      </div>
+      <div class="callout"><b>أهم حاجة:</b> اسمع وردّد بصوت عالي. اقرا كل قطعة ٣–٤ مرات على مدار الأسبوع.</div>
+      <div class="box">
+        <h3>سجّل نفسك (مرة أو مرتين في الأسبوع)</h3>
+        <p class="hint" style="margin-top:4px">اقرا قطعة لمدة دقيقة أو اتنين، وبعدين اسمع التسجيل ودوّر على أخطائك. التسجيل بيفضل على جهازك ومش بيترفع في أي حتة.</p>
+        <div class="rec"><button class="btn pri" id="recBtn">ابدأ التسجيل</button><span class="cnt" id="recTime"></span></div>
+        <audio id="recOut" controls hidden></audio>
+        <p class="hint" id="recErr" hidden></p>
+      </div>
+      <div class="box">
+        <h3>المصادر</h3>
+        <p class="hint" style="margin-top:4px">اضغط على الكارت عشان تفتح اللينك، أو صوّر الـ QR بالموبايل.</p>
+        <div class="res" id="res"></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="tab" id="t-voy">
+    <section>
+      <div class="sec-head">
+        <span class="tag">الدرس ١</span>
+        <h2>الحروف المتحركة: <span class="fr">A · E · I · O · U</span></h2>
+        <p>في الفرنساوي الصوت الواحد ممكن يتكتب بأكتر من طريقة. احفظ المجموعات دي، وكل كلمة بتدوس عليها هتسمعها.</p>
+      </div>
+      <div class="box">
+        <div class="chips" style="margin-top:0;justify-content:center" id="vow5"></div>
+        <div class="grid2" style="margin-top:14px;grid-template-columns:repeat(3,1fr)">
+          <div class="panel" style="text-align:center"><div class="bigw">é</div><b class="fr">accent aigu</b><p class="hint">/e/ مقفولة</p></div>
+          <div class="panel" style="text-align:center"><div class="bigw">è</div><b class="fr">accent grave</b><p class="hint">/ɛ/ مفتوحة</p></div>
+          <div class="panel" style="text-align:center"><div class="bigw">ê</div><b class="fr">accent circonflexe</b><p class="hint">/ɛ/ مفتوحة</p></div>
+        </div>
+      </div>
+      <div class="stack" id="sames"></div>
+      <div class="callout">• <span class="fr">ù</span> مش بتيجي غير في كلمة <span class="fr">où</span> (فين)، وبتتنطق /u/ عشان جاية بعد o.<br>• <span class="fr">eu</span> قريبة من e في <span class="fr">je</span>، بس بشفايف مضمومة أكتر.</div>
+      <div class="box">
+        <h3>اختبار: الكلمة دي فيها أنهي صوت؟</h3>
+        <div class="row" style="justify-content:space-between;margin-top:6px"><span class="cnt" id="vScore">0 / 0</span></div>
+        <div class="card" id="vWord" style="min-height:96px;cursor:default"></div>
+        <div class="choice" id="vOpts"></div>
+        <div class="cfb" id="vfb" style="margin-top:10px"></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="tab" id="t-pron" hidden>
   <section id="r1">
     <div class="sec-head">
       <span class="tag">القاعدة ١</span>
@@ -207,7 +365,7 @@ h3 { font-weight: 800; font-size: 1.05rem; }
     <div class="sec-head">
       <span class="tag">القاعدة ٣</span>
       <h2>الحرف H</h2>
-      <p>الـ h عمره ما بيتنطق. بس فيه نوعين، والفرق بينهم في الربط (liaison) والاختصار (l').</p>
+      <p>الـ h عمره ما بيتنطق. بس فيه نوعين، والفرق بينهم في الربط (liaison) والاختصار (l').<br><b>h aspiré:</b> <span class="fr">pas d'élision / pas de liaison</span> · <b>h muet:</b> <span class="fr">élision / liaison</span></p>
     </div>
     <div class="stack">
       <h3>h muet: يتعامل كأنه حرف متحرك</h3>
@@ -225,6 +383,252 @@ h3 { font-weight: 800; font-size: 1.05rem; }
     </div>
     <div class="quiz" id="quiz"></div>
   </section>
+  </div>
+
+  <!-- syllabes -->
+  <div class="tab" id="t-syl" hidden>
+    <section>
+      <div class="sec-head">
+        <span class="tag">القراءة من الأول</span>
+        <h2>Syllabes 1 – 12: حرف ساكن + حرف متحرك</h2>
+        <p>اقرا كل سطر بصوت عالي، وبعدين اضغط «اسمع السطر» وقارن. ركّز على الحروف المتحركة:</p>
+      </div>
+      <div class="box">
+        <div class="tables" style="margin-top:0;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr))">
+          <div class="tbl" style="font-size:1rem">a = آ<br>i = إي<br>o = أو</div>
+          <div class="tbl" style="font-size:1rem">e = /ə/ خفيفة<br>u = /y/ «يو» مضمومة<br>ou = /u/ «أو»</div>
+          <div class="tbl" style="font-size:1rem">é = /e/ مقفولة<br>è = ê = /ɛ/ مفتوحة</div>
+        </div>
+      </div>
+      <div class="box">
+        <h3>اسمع واختار المقطع</h3>
+        <div class="row" style="justify-content:space-between;margin-top:10px">
+          <button class="spk" id="yPlay" aria-label="اسمع"></button>
+          <span class="cnt" id="yScore">0 / 0</span>
+        </div>
+        <div class="choice" id="yOpts" style="grid-template-columns:repeat(4,1fr)"></div>
+        <div class="cfb" id="yfb" style="margin-top:10px"></div>
+      </div>
+      <div class="stack" id="sylls"></div>
+      <p class="foot" style="margin-top:12px">صوت المتصفح ساعات بيقرا المقطع اللوحده بطريقة غريبة (زي اسم الحرف). لو حصل، ركّز على صوت المدام في الأوديو.</p>
+    </section>
+  </div>
+
+  <!-- é / è -->
+  <div class="tab" id="t-sons" hidden>
+    <section>
+      <div class="sec-head">
+        <span class="tag">الأصوات</span>
+        <h2><span class="fr">é /e/</span> ولا <span class="fr">è /ɛ/</span>؟</h2>
+        <p><b>é</b> بوق مقفول ومبتسم، قريبة من «إيه» قصيرة. <b>è</b> بوق مفتوح أكتر، زي «إِ» في «بِنت». الكلمة هتبقى مخفية، فاعتمد على ودنك.</p>
+      </div>
+      <div class="box">
+        <div class="row" style="justify-content:space-between"><button class="spk" id="sPlay" aria-label="اسمع"></button><span class="cnt" id="sScore">0 / 0</span></div>
+        <div class="card" id="sWord" style="min-height:96px;cursor:default"><span class="hint">اضغط زرار الصوت واسمع</span></div>
+        <div class="choice"><button class="btn" data-s="e"><span class="fr">é</span> — /e/ مقفول</button><button class="btn" data-s="E"><span class="fr">è</span> — /ɛ/ مفتوح</button></div>
+        <div class="cfb" id="sfb" style="margin-top:10px"></div>
+      </div>
+      <div class="grid2" style="margin-top:18px">
+        <div class="panel"><h3 class="fr" style="text-align:right">1. É (aigu) → /e/</h3><div class="chips" id="lE"></div></div>
+        <div class="panel"><h3 class="fr" style="text-align:right">2. È (grave) → /ɛ/</h3><div class="chips" id="lG"></div></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- verbs -->
+  <div class="tab" id="t-verbs" hidden>
+    <section>
+      <div class="sec-head">
+        <span class="tag">الكلمات</span>
+        <h2>كروت الأفعال</h2>
+        <p>اسمع الفعل وخمّن معناه، وبعدين اضغط على الكارت تقلبه. الفعل اللي تحفظه بيخرج من الكروت.</p>
+      </div>
+      <div class="box">
+        <div class="row" style="justify-content:space-between">
+          <select id="vset" aria-label="المجموعة"><option value="all">كل الأفعال</option><option value="1">1er groupe (-er)</option><option value="2">2e groupe (-ir)</option></select>
+          <button class="btn" id="dirBtn">فرنساوي ← عربي</button>
+        </div>
+        <div class="cnt" id="vProg" style="margin-top:10px"></div>
+        <div class="meter"><i id="vMeter"></i></div>
+        <div class="card" id="fc" tabindex="0" role="button"></div>
+        <div class="choice"><button class="btn no" id="again">لسه مش حافظه</button><button class="btn ok" id="know">حافظه ✓</button></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- articles -->
+  <div class="tab" id="t-art" hidden>
+    <section>
+      <div class="sec-head">
+        <span class="tag">أدوات التعريف</span>
+        <h2><span class="fr">Le</span> مذكر · <span class="fr">La</span> مؤنث · <span class="fr">L'</span> قبل حرف متحرك أو h muet</h2>
+        <p>احفظ كل اسم مع أداته من الأول، عشان جنس الكلمة في الفرنساوي مالوش علاقة بالعربي (الكتاب مذكر في الاتنين، بس الكرسي <span class="fr">la chaise</span> مؤنث).</p>
+      </div>
+      <div class="box">
+        <h3>اختبار: le ولا la ولا l'؟</h3>
+        <div class="row" style="justify-content:space-between;margin-top:6px"><span class="cnt" id="aScore">0 / 0</span></div>
+        <div class="card" id="aWord" style="min-height:110px;cursor:default"></div>
+        <div class="choice" id="aOpts" style="grid-template-columns:repeat(3,1fr)">
+          <button class="btn fr" data-a="le" style="font-size:1.3rem">le</button><button class="btn fr" data-a="la" style="font-size:1.3rem">la</button><button class="btn fr" data-a="l'" style="font-size:1.3rem">l'</button>
+        </div>
+        <div class="cfb" id="afb" style="margin-top:10px"></div>
+      </div>
+      <div class="callout">
+        نصايح بتساعد (مش قاعدة 100%):<br>
+        • الأسماء اللي بتنتهي بـ <span class="fr">-age</span> غالبًا مذكر: <span class="fr">le village, le voyage, le fromage, le message</span><br>
+        • اللي بتنتهي بـ <span class="fr">-ure</span> و <span class="fr">-ion</span> غالبًا مؤنث: <span class="fr">la voiture, la culture, la télévision</span><br>
+        • مع <span class="fr">L'</span> مش هتعرف الجنس من الأداة، فاحفظها كمان مع <span class="fr">un / une</span>.
+      </div>
+      <div class="grid2" style="margin-top:18px">
+        <div class="panel art-col"><h3><span class="fr">La</span> — المؤنث</h3><div class="chips" id="artLa"></div></div>
+        <div class="panel art-col"><h3><span class="fr">Le</span> — المذكر</h3><div class="chips" id="artLe"></div></div>
+      </div>
+      <div class="panel art-col" style="margin-top:14px"><h3><span class="fr">L'</span> — قبل حرف متحرك أو h muet</h3><div class="chips" id="artL"></div>
+        <p class="hint" style="margin-top:10px">ملاحظة: <span class="fr">l'histoire</span> ممكن تعني «التاريخ» أو «القصة» حسب الجملة.</p></div>
+    </section>
+  </div>
+
+  <!-- conjugation -->
+  <div class="tab" id="t-conj" hidden>
+    <section>
+      <div class="sec-head">
+        <span class="tag">القواعد</span>
+        <h2>صرّف الفعل في المضارع</h2>
+        <p>اكتب الفعل بس من غير الضمير واضغط Enter.</p>
+      </div>
+      <div class="box">
+        <div class="row" style="justify-content:space-between">
+          <select id="cset" aria-label="نوع الأفعال"><option value="all">الكل</option><option value="1">1er groupe</option><option value="2">2e groupe</option><option value="3">avoir · être · aller</option></select>
+          <span class="cnt" id="cScore">0 / 0</span>
+        </div>
+        <div class="q" id="cq"></div>
+        <input type="text" id="cin" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="…" aria-label="الإجابة">
+        <div class="acc"><button>é</button><button>è</button><button>ê</button><button>ç</button><button>â</button></div>
+        <div class="cfb" id="cfb"></div>
+        <div class="choice"><button class="btn" id="cnext">تخطّي</button><button class="btn pri" id="ccheck">صحّح</button></div>
+      </div>
+      <div class="tables">
+        <div class="tbl"><h3>المجموعة ١ — ‎-er</h3>je march<em>e</em><br>tu march<em>es</em><br>il/elle/on march<em>e</em><br>nous march<em>ons</em><br>vous march<em>ez</em><br>ils/elles march<em>ent</em></div>
+        <div class="tbl"><h3>المجموعة ٢ — ‎-ir</h3>je fin<em>is</em><br>tu fin<em>is</em><br>il/elle/on fin<em>it</em><br>nous fin<em>issons</em><br>vous fin<em>issez</em><br>ils/elles fin<em>issent</em></div>
+        <div class="tbl"><h3>المجموعة ٣ — aller</h3>je vais<br>tu vas<br>il/elle/on va<br>nous allons<br>vous allez<br>ils/elles vont</div>
+      </div>
+      <div class="callout">
+        • <span class="fr">-e / -es / -ent</span> كلهم ساكتين: <span class="fr">je marche = tu marches = ils marchent</span> في النطق.<br>
+        • في المجموعة ٢ الـ <span class="fr">s</span> والـ <span class="fr">t</span> في المفرد ساكتين: <span class="fr">je finis = il finit</span>. في الجمع <span class="fr">-iss-</span> بتتنطق.<br>
+        • المجموعة ٣ ليها نهايات كتير: <span class="fr">-ir / -re / -oir / -er</span>. <span class="fr">aller</span> بتنتهي بـ <span class="fr">-er</span> بس هي مجموعة ٣.<br>
+        • قبل حرف متحرك أو h muet: <span class="fr">je → j'</span> (<span class="fr">j'aime, j'habite, j'obéis</span>).<br>
+        • استثناءات: <span class="fr">nous commen<b>ç</b>ons · j'ach<b>è</b>te · j'appe<b>ll</b>e</span>
+      </div>
+    </section>
+  </div>
+
+  <!-- avoir / être -->
+  <div class="tab" id="t-ae" hidden>
+    <section>
+      <div class="sec-head">
+        <span class="tag">أهم فعلين</span>
+        <h2><span class="fr">avoir</span> (يملك) و <span class="fr">être</span> (يكون)</h2>
+        <p>العلامة <span class="rl">‿</span> معناها اربط الكلمتين، والـ <b style="color:var(--sil)">z</b> معناها الـ s الساكتة بتتنطق z.</p>
+      </div>
+      <div class="tables">
+        <div class="tbl"><h3><span class="fr">avoir</span> / to have</h3>
+          <button class="chip plain" data-say="j'ai">j'ai</button><br>
+          tu<span class="lk">‿</span>as<br>il<span class="lk">‿</span>a<br>elle<span class="lk">‿</span>a<br>on<span class="lk">‿</span>a <sup>n</sup><br>
+          nous<span class="lk">‿</span>avons <sup>z</sup><br>vous<span class="lk">‿</span>avez <sup>z</sup><br>ils<span class="lk">‿</span>ont <sup>z</sup><br>elles<span class="lk">‿</span>ont <sup>z</sup>
+          <div style="margin-top:8px"><button class="chip plain" data-say="j'ai, tu as, il a, elle a, on a, nous avons, vous avez, ils ont, elles ont">اسمع الكل</button></div>
+        </div>
+        <div class="tbl"><h3><span class="fr">être</span> / to be</h3>
+          je suis<br>tu es<br>il est<br>elle est<br>on<span class="lk">‿</span>est <sup>n</sup><br>
+          nous sommes<br>vous<span class="lk">‿</span>êtes <sup>z</sup><br>ils sont<br>elles sont
+          <div style="margin-top:8px"><button class="chip plain" data-say="je suis, tu es, il est, elle est, on est, nous sommes, vous êtes, ils sont, elles sont">اسمع الكل</button></div>
+        </div>
+      </div>
+      <div class="box">
+        <h3>اوعى تلخبط بينهم</h3>
+        <p class="hint" style="margin-top:4px">الفرق كله في صوت واحد: z ولا s.</p>
+        <div class="grid2" style="margin-top:12px">
+          <div class="panel"><button class="chip" data-say="ils ont">ils‿ont</button><p class="hint" style="margin-top:8px"><span class="ipa">/ilzɔ̃/</span> صوت <b>z</b> ← عندهم (avoir)</p></div>
+          <div class="panel"><button class="chip" data-say="ils sont">ils sont</button><p class="hint" style="margin-top:8px"><span class="ipa">/ilsɔ̃/</span> صوت <b>s</b> ← هم يكونوا (être)</p></div>
+        </div>
+        <p class="hint" style="margin-top:12px">وكمان <span class="fr">être</span> الـ ê فيها accent circonflexe، ونفس الحكاية في <span class="fr">vous êtes</span>.</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- phrase -->
+  <div class="tab" id="t-phrase" hidden>
+    <section>
+      <div class="sec-head">
+        <span class="tag">تركيب الجملة</span>
+        <h2><span class="fr">Phrase = Sujet + Verbe + Complément</span></h2>
+        <p>الجملة الفرنساوي بتمشي بالترتيب ده.</p>
+      </div>
+      <div class="box">
+        <div class="parts"><div class="part s1">Un enfant<small>Sujet</small></div><div class="part s2">mange<small>Verbe</small></div><div class="part s3">la pomme<small>Complément</small></div></div>
+        <div class="parts"><div class="part s1">Je<small>Sujet</small></div><div class="part s2">parle<small>Verbe</small></div><div class="part s3">à un enfant<small>Complément</small></div></div>
+        <p class="hint" style="margin-top:10px">اوعى تنسى الـ accent في <span class="fr">à</span> (حرف جر) عشان من غيره تبقى <span class="fr">a</span> من avoir.</p>
+      </div>
+      <div class="grid2" style="margin-top:18px">
+        <div class="panel"><h3>الـ Sujet ممكن يكون…</h3>
+          <p style="margin-top:6px"><b>ضمير (pronom personnel):</b> <span class="fr">je, tu, il, elle, on, nous, vous, ils, elles</span></p>
+          <p style="margin-top:6px"><b>اسم علم (nom propre):</b> <span class="fr">Sylvia, Noha, la France</span></p>
+          <p style="margin-top:6px"><b>اسم عادي (nom commun):</b> <span class="fr">la chaise, le fils, le chien</span></p>
+          <p style="margin-top:6px"><b>مجموعة اسمية (groupe nominal)</b> ← شوف جنبك</p>
+        </div>
+        <div class="panel"><h3>Groupe nominal</h3>
+          <p style="margin-top:6px">Déterminant + (Adj) + Nom + (adverbe/adjectif)</p>
+          <p class="fr" style="margin-top:6px;text-align:right">un · une · des · le · la · les · l' · mon · ma · mes</p>
+          <div class="gn">
+            <div>un enfant</div>
+            <div>un <span class="add">petit</span> enfant</div>
+            <div>un petit enfant <span class="add">italien</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="box">
+        <h3>تمرين: طلّع جزء الجملة</h3>
+        <div class="cnt" id="pScore" style="margin-top:6px"></div>
+        <div id="pBox"></div>
+        <button class="btn pri" id="pNext" style="margin-top:12px" hidden>اللي بعده</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- reading -->
+  <div class="tab" id="t-read" hidden>
+    <section>
+      <div class="sec-head">
+        <span class="tag">القراءة</span>
+        <h2>اقرا في مجموعات (groupes de souffle)</h2>
+        <p>جمل تمرين مبنية على أمثلة المدام. اسمع الجملة، وبعدين اقراها بصوت عالي وطبّق العلامات. المهم النطق الصح مش السرعة.</p>
+        <div class="lg2"><span><b class="rs">x</b> ساكت</span><span><b class="rn">an</b> أنفي</span><span><b class="rl">‿</b> ربط</span><span><b class="ry">u</b> = [y]</span><span><b class="ru">ou</b> = [u]</span></div>
+      </div>
+      <div class="callout">
+        <b>ركّز في النصين على الحاجات دي:</b> الرقم بيتربط مع <span class="fr">heures</span>، والـ f في neuf بتتنطق v، والـ d في quand بتتنطق t.
+        <div class="fr" style="display:block;text-align:left;margin-top:6px;line-height:1.9">six‿heures /sizœʁ/<br>sept‿heures /sɛtœʁ/<br>huit‿heures /ɥitœʁ/<br>neuf‿heures /nœvœʁ/<br>Quand‿elle /kɑ̃tɛl/</div>
+      </div>
+      <div class="box"><h3>Texte 1 — Sylvie</h3><div id="txt1"></div></div>
+      <div class="box"><h3>Texte 2 — Jade</h3><div id="txt2"></div></div>
+      <div class="box"><h3>جمل تمرين بالعلامات</h3><div id="sents"></div></div>
+    </section>
+  </div>
+
+  <!-- full test -->
+  <div class="tab" id="t-test" hidden>
+    <section>
+      <div class="sec-head">
+        <span class="tag">اختبار شامل</span>
+        <h2>على كل اللي اتشرح لحد دلوقتي</h2>
+        <p>نطق، ربط، تصريف، avoir و être، وتركيب الجملة.</p>
+      </div>
+      <div class="box">
+        <div class="row" style="justify-content:space-between"><span class="cnt" id="qNum"></span><span class="cnt" id="qScore"></span></div>
+        <div class="meter"><i id="qMeter" style="background:var(--say)"></i></div>
+        <div id="qBox"></div>
+        <button class="btn pri" id="qNext" style="margin-top:12px;width:100%" hidden>السؤال اللي بعده</button>
+      </div>
+    </section>
+  </div>
 
   <p class="foot">الصوت من محرك النطق في المتصفح. لو مفيش صوت فرنسي، نزّله من إعدادات لغة الجهاز.</p>
 </main>
@@ -275,6 +679,7 @@ h3 { font-weight: 800; font-size: 1.05rem; }
       setTimeout(function () { try { window.speechSynthesis.speak(u); } catch (e2) {} }, 60);
     } catch (e) { note('الصوت مش شغال في المتصفح ده.'); }
   }
+  window.say = say;
   document.addEventListener('click', function (e) {
     var b = e.target.closest ? e.target.closest('[data-say]') : null;
     if (b) { say(b.getAttribute('data-say'), b); }
@@ -307,16 +712,24 @@ h3 { font-weight: 800; font-size: 1.05rem; }
 
   /* rule 3 */
   var HM = [
-    ['{h}omme', "l'{h}omme", 'les {h}ommes', '/lez‿ɔm/', 'بتختصر l\' وبتربط الـ s وتتنطق z'],
-    ['{h}ôtel', "l'{h}ôtel", 'les {h}ôtels', '/lez‿otɛl/', 'بتختصر l\' وبتربط الـ s وتتنطق z'],
-    ['{h}eure', "l'{h}eure", 'les {h}eures', '/lez‿œʁ/', 'بتختصر l\' وبتربط الـ s وتتنطق z'],
-    ['{h}ôpital', "l'{h}ôpital", 'les {h}ôpitaux', '/lez‿opito/', 'بتختصر l\' وبتربط الـ s وتتنطق z']
+    ['{h}abit', "l'{h}abit", 'les {h}abits', '/lezabi/', "بتختصر l' وبتربط الـ s وتتنطق z"],
+    ['{h}abitude', "l'{h}abitude", 'les {h}abitudes', '/lezabityd/', "بتختصر l' وبتربط الـ s وتتنطق z"],
+    ['{h}erbe', "l'{h}erbe", 'les {h}erbes', '/lezɛʁb/', "بتختصر l' وبتربط الـ s وتتنطق z"],
+    ['{h}eure', "l'{h}eure", 'les {h}eures', '/lezœʁ/', "بتختصر l' وبتربط الـ s وتتنطق z"],
+    ['{h}istoire', "l'{h}istoire", 'les {h}istoires', '/lezistwaʁ/', "بتختصر l' وبتربط الـ s وتتنطق z"],
+    ['{h}omme', "l'{h}omme", 'les {h}ommes', '/lezɔm/', "بتختصر l' وبتربط الـ s وتتنطق z"],
+    ['{h}ôpital', "l'{h}ôpital", 'les {h}ôpitaux', '/lezopito/', "بتختصر l' وبتربط الـ s وتتنطق z"],
+    ['{h}ôtel', "l'{h}ôtel", 'les {h}ôtels', '/lezotɛl/', "بتختصر l' وبتربط الـ s وتتنطق z"]
   ];
   var HA = [
-    ['(h)éros', 'le (h)éros', 'les (h)éros', '/le eʁo/', 'مفيش اختصار ومفيش ربط'],
-    ['(h)aine', 'la (h)aine', 'les (h)aines', '/le ɛn/', 'مفيش اختصار ومفيش ربط'],
-    ['(h)aricot', 'le (h)aricot', 'les (h)aricots', '/le aʁiko/', 'مفيش اختصار ومفيش ربط'],
-    ['(h)uit', 'le (h)uit', 'les (h)uit', '/le ɥit/', 'مفيش اختصار ومفيش ربط']
+    ['(h)aine', "la (h)aine", 'les (h)aines', '/le ɛn/', "مفيش اختصار ومفيش ربط"],
+    ['(h)andicap', "le (h)andicap", 'les (h)andicaps', '/le ɑ̃dikap/', "مفيش اختصار ومفيش ربط"],
+    ['(h)arcèlement', "le (h)arcèlement", 'les (h)arcèlements', '/le aʁsɛlmɑ̃/', "مفيش اختصار ومفيش ربط"],
+    ['(h)aricot', "le (h)aricot", 'les (h)aricots', '/le aʁiko/', "مفيش اختصار ومفيش ربط"],
+    ['(h)asard', "le (h)asard", 'les (h)asards', '/le azaʁ/', "مفيش اختصار ومفيش ربط"],
+    ['(h)auteur', "la (h)auteur", 'les (h)auteurs', '/le otœʁ/', "مفيش اختصار ومفيش ربط"],
+    ['(h)éros', "le (h)éros", 'les (h)éros', '/le eʁo/', "مفيش اختصار ومفيش ربط"],
+    ['(h)onte', "la (h)onte", 'les (h)ontes', '/le ɔ̃t/', "مفيش اختصار ومفيش ربط"]
   ];
   function hrow(r, asp) {
     return '<div class="panel hrow"><div class="hd"><span class="hword">' + mk(r[0]) + '</span><span class="badge' + (asp ? ' asp' : '') + '">' + (asp ? 'aspiré' : 'muet') + '</span></div>' +
@@ -407,6 +820,437 @@ h3 { font-weight: 800; font-size: 1.05rem; }
   }
 
   start();
+})();
+</script>
+<script>
+(function () {
+  var ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z"/><path d="M16 8.5a5 5 0 010 7"/><path d="M19 6a9 9 0 010 12"/></svg>';
+  function $(s) { return document.querySelector(s); }
+  function say(t) { if (window.say) window.say(t); }
+  function rnd(a) { return a[Math.floor(Math.random() * a.length)]; }
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  var store = {
+    get: function (k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+    set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  };
+  document.querySelectorAll('.spk').forEach(function (b) { b.innerHTML = ICON; });
+
+  /* tabs */
+  var tabs = document.querySelectorAll('nav.tabs button');
+  function openTab(id) {
+    var found = false;
+    tabs.forEach(function (b) { var on = b.getAttribute('data-t') === id; b.setAttribute('aria-selected', on); if (on) found = true; });
+    if (!found) return;
+    document.querySelectorAll('.tab').forEach(function (t) { t.hidden = t.id !== id; });
+    store.set('tab', id);
+  }
+  tabs.forEach(function (b) { b.addEventListener('click', function () { openTab(b.getAttribute('data-t')); }); });
+  openTab(location.hash.slice(1) || store.get('tab', 't-plan'));
+
+  /* ---------- daily plan ---------- */
+  var PLAN = [
+    ['مراجعة الدرس', 'راجع القاعدة الصوتية من المحاضرة واقرا أمثلتها بصوت عالي. ركّز على الصوت مش على شكل الكلمة.'],
+    ['اكتب 5–10 كلمات', 'كلمات فيها الصوت الجديد.'],
+    ['تدريب الكلمات (10 دقايق)', 'اقرا ببطء، وكرّر كل كلمة 3 مرات. انطقها الأول من غير ما تسمع، وبعدين قارن نطقك باللي في المحاضرة.'],
+    ['القطعة 1', 'القراءة 1 ببطء مع القواعد ← 2 للنطق الصح ← 3 طبيعي بسرعة مناسبة ← 4 سجّل وصلّح.'],
+    ['القطعة 2', 'نفس الأربع قراءات.'],
+    ['القطعة 3', 'نفس الأربع قراءات.'],
+    ['اسمع وردّد', 'أغنية أو فيديو من المصادر، ورَدّد بصوت عالي.']
+  ];
+  var today = new Date().toISOString().slice(0, 10);
+  var done = store.get('plan-' + today, {});
+  function drawPlan() {
+    var n = 0;
+    $('#plan').innerHTML = PLAN.map(function (p, i) { if (done[i]) n++;
+      return '<label class="todo' + (done[i] ? ' done' : '') + '"><input type="checkbox" id="pl' + i + '" data-pl="' + i + '"' + (done[i] ? ' checked' : '') + '><div><div class="t">' + p[0] + '</div><div class="d">' + p[1] + '</div></div></label>'; }).join('');
+    $('#planCnt').textContent = n + ' من ' + PLAN.length;
+    $('#planMeter').style.width = (n / PLAN.length * 100) + '%';
+  }
+  $('#planDate').textContent = new Date().toLocaleDateString('ar-EG', { weekday: 'long', day: 'numeric', month: 'long' });
+  $('#plan').addEventListener('change', function (e) { var i = e.target.getAttribute('data-pl'); if (i === null) return; done[i] = e.target.checked; store.set('plan-' + today, done); drawPlan(); });
+  drawPlan();
+
+  /* recorder */
+  var mr = null, chunks = [], t0 = 0, tick = null;
+  $('#recBtn').addEventListener('click', function () {
+    if (mr && mr.state === 'recording') { mr.stop(); return; }
+    if (!navigator.mediaDevices || !window.MediaRecorder) { $('#recErr').hidden = false; $('#recErr').textContent = 'المتصفح ده مش بيدعم التسجيل. استخدم مسجّل الصوت في الموبايل.'; return; }
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(function (st) {
+      chunks = []; mr = new MediaRecorder(st);
+      mr.ondataavailable = function (e) { chunks.push(e.data); };
+      mr.onstop = function () { st.getTracks().forEach(function (t) { t.stop(); }); clearInterval(tick);
+        var a = $('#recOut'); a.src = URL.createObjectURL(new Blob(chunks, { type: mr.mimeType })); a.hidden = false;
+        $('#recBtn').textContent = 'سجّل تاني'; };
+      mr.start(); t0 = Date.now(); $('#recBtn').textContent = 'وقّف التسجيل';
+      tick = setInterval(function () { var s = Math.floor((Date.now() - t0) / 1000); $('#recTime').textContent = Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2); }, 500);
+    }).catch(function () { $('#recErr').hidden = false; $('#recErr').textContent = 'محتاج تسمح للصفحة تستخدم المايك من إعدادات المتصفح.'; });
+  });
+
+  /* resources with QR */
+  var RES = [
+    ['Google Classroom', 'فصل الكورس', 'https://classroom.google.com/c/ODkyODY2NTgxNjY5?cjc=cjbifg2r'],
+    ['قطع قراءة 1', 'podcastfrancaisfacile', 'https://www.podcastfrancaisfacile.com/apprendre-le-francais/liste-des-textes-fle'],
+    ['قطع قراءة 2', 'lingua.com', 'https://lingua.com/fr/francais/lecture/'],
+    ['ElevenLabs', 'برنامج القراءة بصوت', 'https://elevenlabs.io/app/speech-synthesis/text-to-speech'],
+    ['DeepL', 'النطق والترجمة', 'https://www.deepl.com/en/translator'],
+    ['NaturalReaders', 'برنامج تاني للنطق', 'https://www.naturalreaders.com/'],
+    ['قائمة فيديوهات', 'YouTube playlist', 'https://www.youtube.com/watch?v=03gZHVyU-Os&list=PLS_tYHx2HXX5dmPdXM21KEhPNkb9wf8fo'],
+    ['أغنية 1', 'كلامها بسيط', 'https://www.youtube.com/watch?v=gR4KxDPcFMI'],
+    ['أغنية 2', 'كلامها بسيط', 'https://www.youtube.com/watch?v=Lrfk-GyNqCw'],
+    ['أغنية 3', 'كلامها بسيط', 'https://www.youtube.com/watch?v=V3YOaXvMmhk'],
+    ['فيديو', 'YouTube', 'https://www.youtube.com/watch?v=Hatu0N1XYYY']
+  ];
+  $('#res').innerHTML = RES.map(function (r) {
+    var qr = '';
+    try { var q = qrcode(0, 'M'); q.addData(r[2]); q.make(); qr = q.createSvgTag({ cellSize: 3, margin: 0, scalable: true }); } catch (e) {}
+    return '<a href="' + r[2] + '" target="_blank" rel="noopener">' + (qr ? '<div class="qr">' + qr + '</div>' : '') + '<b>' + r[0] + '</b><span>' + r[1] + '</span></a>';
+  }).join('');
+
+  /* ---------- lesson 1: vowels ---------- */
+  var SAME = [
+    ['1', 'i = y', '/i/', ['il', 'ami', 'stylo', 'cycle']],
+    ['2', 'é = et = ez = er', '/e/ مقفولة', ['café', 'et', 'nez', 'chez', 'parler', 'manger']],
+    ['3', 'ou', '/u/ زي «أو»', ['vous', 'tout', 'jour', 'rouge']],
+    ['4', 'a = à = â', '/a/', ['papa', 'à', 'là', 'pâte']],
+    ['5', 'è = est = ai = ê', '/ɛ/ مفتوحة', ['père', "c'est", 'mais', 'lait', 'fête', 'forêt']],
+    ['6', 'u = û', '/y/ «يو» مضمومة', ['tu', 'rue', 'sûr', 'mûr']],
+    ['7', 'eu ≈ e', '/ø/', ['deux', 'peu', 'bleu', 'cheveux']],
+    ['8', 'o = au = eau', '/o/', ['moto', 'auto', 'chaud', 'eau', 'beau']]
+  ];
+  $('#vow5').innerHTML = ['a', 'e', 'i', 'o', 'u'].map(function (v) { return '<button type="button" class="chip plain" data-say="' + v + '" style="font-size:1.6rem">' + v.toUpperCase() + '</button>'; }).join('');
+  $('#sames').innerHTML = SAME.map(function (g) {
+    return '<div class="panel grp"><div class="big">' + g[0] + '</div><div style="flex:1;min-width:0"><div class="row" style="justify-content:space-between"><b class="fr" style="font-size:1.3rem">' + g[1] + '</b><span class="hint"><span class="ipa">' + g[2] + '</span></span></div>' +
+      '<div class="chips" style="margin-top:8px">' + g[3].map(function (w) { return '<button type="button" class="chip plain" data-say="' + w + '">' + w + '</button>'; }).join('') + '</div></div></div>';
+  }).join('');
+  var vQ = null, vOk = 0, vTot = 0;
+  function nextV() {
+    var gi = Math.floor(Math.random() * SAME.length), w = rnd(SAME[gi][3]);
+    var others = shuffle(SAME.map(function (_, i) { return i; }).filter(function (i) { return i !== gi; })).slice(0, 3);
+    vQ = { w: w, a: gi, done: false };
+    $('#vWord').innerHTML = '<div class="row" style="justify-content:center"><span class="bigw">' + w + '</span><button type="button" class="spk" data-say="' + w + '" aria-label="اسمع">' + ICON + '</button></div>';
+    $('#vOpts').innerHTML = shuffle(others.concat(gi)).map(function (i) { return '<button class="btn fr" data-v="' + i + '">' + SAME[i][1] + '</button>'; }).join('');
+    $('#vfb').textContent = '';
+  }
+  $('#vOpts').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-v]'); if (!b) return;
+    if (vQ.done) { nextV(); return; }
+    vQ.done = true; vTot++;
+    var ok = +b.getAttribute('data-v') === vQ.a; if (ok) vOk++;
+    $('#vOpts').querySelectorAll('[data-v]').forEach(function (x) { if (+x.getAttribute('data-v') === vQ.a) x.classList.add('ok'); else if (x === b) x.classList.add('no'); });
+    $('#vfb').textContent = (ok ? '✓ صح' : '✗ لأ') + ' — ' + vQ.w + ' = ' + SAME[vQ.a][2] + ' · اضغط أي اختيار للي بعدها';
+    $('#vfb').className = 'cfb ' + (ok ? 'good' : 'bad');
+    $('#vScore').textContent = vOk + ' / ' + vTot; say(vQ.w);
+  });
+  nextV();
+
+  /* ---------- syllabes ---------- */
+  var SYL = {
+    1: ['la le li lu lo li le', 'li lé lu le lè lo lê', 'la li le lê lé lu lo'],
+    2: ['sa so si se su sé si', 'sê se so su sé sè sa', 'sé sa su si sè se so'],
+    3: ['ra re ri rè ru ro ri', 're ré ra rè ro ri re', 'ré ra ro rê ri ré ru'],
+    4: ['na ne ni nu no ni ne', 'ni né nu ne nè no nê', 'na ni ne nê né nu no'],
+    5: ['ba bo bi be bu bé bi', 'bê be bo bu bé bè ba', 'bé ba bu bo bè be bi'],
+    6: ['va ve vi vè vu vo vi', 've vé va vè vo vi ve', 'vé va vo vê vi vé vu'],
+    7: ['ma me mi mu mo mi me', 'mi mé mu me mè mo mê', 'ma mi me mê mé mu mo'],
+    8: ['ta to ti te tu té ti', 'tê te to tu té tè ta', 'té ta tu to tè te ti'],
+    9: ['pa pe pi pé pu po pi', 'pe pê pa pè po pi pe', 'pé pu po pê pi pé pa'],
+    10: ['ja je ji ju jo ji je', 'ji jé ju je jè jo jê', 'ja ji je jê jé ju jo'],
+    11: ['fa fo fi fe fu fé fi', 'fê fe fo fu fé fè fa', 'fé fa fu fo fè fe fi'],
+    12: ['da de di du po dè di', 'de dé da dè do di de', 'dé da do dê di dé du']
+  };
+  var sh = '';
+  Object.keys(SYL).forEach(function (n) {
+    sh += '<div class="panel"><h3 class="fr" style="text-align:right">Syllabes ' + n + '</h3>';
+    SYL[n].forEach(function (line) {
+      var w = line.split(' ');
+      sh += '<div class="chips" style="margin-top:10px">' + w.map(function (s) { return '<button type="button" class="chip plain" data-say="' + s + '">' + s + '</button>'; }).join('') +
+        '<button type="button" class="chip" data-say="' + w.join(', ') + '" style="font-family:var(--font-ar);font-size:.9rem">اسمع السطر ' + ICON + '</button></div>';
+    });
+    sh += '</div>';
+  });
+  $('#sylls').innerHTML = sh;
+  var CONS = ['l', 's', 'r', 'n', 'b', 'v', 'm', 't', 'p', 'j', 'f', 'd'], VOW = ['a', 'e', 'i', 'o', 'u', 'é', 'è'];
+  var yQ = null, yOk = 0, yTot = 0;
+  function nextY() {
+    var c = rnd(CONS), opts = shuffle(VOW).slice(0, 4).map(function (v) { return c + v; });
+    yQ = { a: rnd(opts), done: false };
+    $('#yOpts').innerHTML = opts.map(function (o) { return '<button class="btn fr" style="font-size:1.4rem" data-y="' + o + '">' + o + '</button>'; }).join('');
+    $('#yfb').textContent = '';
+  }
+  $('#yPlay').addEventListener('click', function () { say(yQ.a); });
+  $('#yOpts').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-y]'); if (!b) return;
+    if (yQ.done) { nextY(); say(yQ.a); return; }
+    yQ.done = true; yTot++;
+    var ok = b.getAttribute('data-y') === yQ.a; if (ok) yOk++;
+    $('#yOpts').querySelectorAll('[data-y]').forEach(function (x) { if (x.getAttribute('data-y') === yQ.a) x.classList.add('ok'); else if (x === b) x.classList.add('no'); });
+    $('#yfb').textContent = (ok ? '✓ صح' : '✗ كان ' + yQ.a) + ' · اضغط أي اختيار للي بعده';
+    $('#yfb').className = 'cfb ' + (ok ? 'good' : 'bad');
+    $('#yScore').textContent = yOk + ' / ' + yTot;
+  });
+  nextY();
+
+  /* ---------- é / è ---------- */
+  var E = [["l'école","المدرسة"],["l'élève","التلميذ / التلميذة"],["le café","المقهى"],["le marché","السوق"],["le bébé","الرضيع"],["l'été","الصيف"],["la clé","المفتاح"],["la télévision","التلفاز"],["le téléphone","الهاتف"],["le cinéma","السينما"],["le métier","المهنة"],["le médecin","الطبيب"],["le déjeuner","الغداء"],["le résumé","الملخص"],["la sécurité","الأمان"],["la vérité","الحقيقة"],["la liberté","الحرية"],["la société","المجتمع"],["l'énergie","الطاقة"],["l'université","الجامعة"]];
+  var G = [["la mère","الأم"],["le père","الأب"],["le frère","الأخ"],["la sœur","الأخت"],["la rivière","النهر"],["la lumière","الضوء"],["la pièce","الغرفة / القطعة"],["la crème","الكريمة"],["le problème","المشكلة"],["le collège","المدرسة الإعدادية"],["le manège","الملاهي الدوّارة"],["la planète","الكوكب"],["la règle","القاعدة / المسطرة"],["la flèche","السهم"],["la fièvre","الحمى"],["la chèvre","الماعز"],["le zèbre","الحمار الوحشي"],["le siège","المقعد"],["le lièvre","الأرنب البري"]];
+  var GQ = G.filter(function (x) { return x[0] !== 'la sœur'; });
+  function chips(a) { return a.map(function (w) { return '<button type="button" class="chip plain" data-say="' + w[0] + '">' + w[0] + ' <small>' + w[1] + '</small></button>'; }).join(''); }
+  $('#lE').innerHTML = chips(E); $('#lG').innerHTML = chips(G);
+  var sQ = null, sOk = 0, sTot = 0;
+  function nextS() {
+    var isE = Math.random() < .5;
+    var pk = rnd(isE ? E : GQ); sQ = { w: pk[0], ar: pk[1], k: isE ? 'e' : 'E', done: false };
+    $('#sWord').innerHTML = '<span class="hint">اضغط زرار الصوت واسمع</span>'; $('#sfb').textContent = '';
+  }
+  $('#sPlay').addEventListener('click', function () { say(sQ.w); });
+  document.querySelectorAll('[data-s]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (sQ.done) { nextS(); say(sQ.w); return; }
+      sQ.done = true; sTot++;
+      var ok = b.getAttribute('data-s') === sQ.k; if (ok) sOk++;
+      $('#sWord').innerHTML = '<span class="bigw">' + sQ.w + '</span><span class="ar" style="font-size:1.1rem">' + sQ.ar + '</span>';
+      $('#sfb').textContent = (ok ? '✓ صح' : '✗ لأ') + ' — ' + (sQ.k === 'e' ? 'é /e/ مقفولة' : 'è /ɛ/ مفتوحة') + ' · اضغط أي اختيار للي بعدها';
+      $('#sfb').className = 'cfb ' + (ok ? 'good' : 'bad');
+      $('#sScore').textContent = sOk + ' / ' + sTot; say(sQ.w);
+    });
+  });
+  nextS();
+
+  /* ---------- verbs ---------- */
+  var V1 = [["préparer","يحضّر"],["porter","يحمل / يرتدي"],["jouer","يلعب"],["chanter","يغني"],["danser","يرقص"],["marcher","يمشي"],["étudier","يدرس"],["travailler","يعمل"],["regarder","ينظر إلى / يشاهد"],["trouver","يجد"],["chercher","يبحث عن"],["donner","يعطي"],["entrer","يدخل"],["rester","يبقى"],["quitter","يغادر / يترك"],["laisser","يترك / يسمح"],["commencer","يبدأ"],["continuer","يواصل"],["aimer","يحب"],["adorer","يعشق"],["arriver","يصل"],["apporter","يحضر / يجلب"],["appeler","ينادي / يتصل بـ"],["acheter","يشتري"],["aider","يساعد"],["ajouter","يضيف"],["habiter","يسكن"],["parler","يتحدث"],["demander","يطلب"],["écouter","يستمع إلى"]];
+  var V2 = [["finir","ينهي"],["choisir","يختار"],["réussir","ينجح"],["grandir","يكبر"],["grossir","يزداد وزنًا / يسمن"],["maigrir","ينقص وزنًا / ينحف"],["rougir","يحمرّ"],["jaunir","يصفرّ"],["obéir","يطيع"],["désobéir","يعصي / لا يطيع"],["réfléchir","يفكر"],["remplir","يملأ"],["bâtir","يبني"]];
+  var IS2 = {}; V2.forEach(function (v) { IS2[v[0]] = 1; });
+  var PR = ["je","tu","il","elle","on","nous","vous","ils","elles"];
+  var IRR = {
+    aller: ["vais","vas","va","va","va","allons","allez","vont","vont"],
+    avoir: ["ai","as","a","a","a","avons","avez","ont","ont"],
+    "être": ["suis","es","est","est","est","sommes","êtes","sont","sont"]
+  };
+  function conj(v) {
+    if (IRR[v]) return IRR[v];
+    var st = v.slice(0, -2);
+    if (IS2[v]) return [st+"is",st+"is",st+"it",st+"it",st+"it",st+"issons",st+"issez",st+"issent",st+"issent"];
+    var a = st;
+    if (v === "acheter") a = "achèt";
+    if (v === "appeler") a = "appell";
+    var f = [a+"e",a+"es",a+"e",a+"e",a+"e",st+"ons",st+"ez",a+"ent",a+"ent"];
+    if (v === "commencer") f[5] = "commençons";
+    return f;
+  }
+  function pron(i, form) { return i === 0 && /^[aeiouéèêh]/.test(form) ? "j'" : PR[i] + " "; }
+
+  var known = {}; (store.get('known', []) || []).forEach(function (k) { known[k] = 1; });
+  var dirFr = true, deck = [], cur = null;
+  function pool() { var s = $('#vset').value; return s === '1' ? V1 : s === '2' ? V2 : V1.concat(V2); }
+  function save() {
+    var p = pool(), n = p.filter(function (v) { return known[v[0]]; }).length;
+    store.set('known', Object.keys(known));
+    $('#vProg').textContent = 'حافظ ' + n + ' من ' + p.length;
+    $('#vMeter').style.width = (n / p.length * 100) + '%';
+  }
+  function buildDeck() {
+    var p = pool();
+    deck = shuffle(p.filter(function (v) { return !known[v[0]]; }));
+    if (!deck.length) { p.forEach(function (v) { delete known[v[0]]; }); save(); deck = shuffle(p); }
+  }
+  function showCard() {
+    if (!deck.length) buildDeck();
+    cur = deck[0];
+    var f = conj(cur[0]);
+    var ex = pron(0, f[0]) + f[0] + ' · nous ' + f[5] + ' · ils ' + f[7];
+    var g = '<span class="grpb">' + (IS2[cur[0]] ? '2e groupe' : '1er groupe') + '</span>';
+    var fr = '<div class="row" style="justify-content:center"><span class="bigw">' + cur[0] + '</span><button type="button" class="spk" data-say="' + cur[0] + '" aria-label="اسمع">' + ICON + '</button></div>';
+    var ar = '<div class="ar">' + cur[1] + '</div>';
+    $('#fc').innerHTML = g + (dirFr ? fr : ar) + '<div class="back" hidden>' + (dirFr ? ar : fr) + '<div class="ex">' + ex + '</div></div><span class="hint">اضغط تقلب الكارت</span>';
+    if (dirFr) say(cur[0]);
+  }
+  $('#fc').addEventListener('click', function (e) {
+    if (e.target.closest('[data-say]')) return;
+    var b = $('#fc .back'); b.hidden = !b.hidden;
+    if (!b.hidden && !dirFr) say(cur[0]);
+  });
+  $('#fc').addEventListener('keydown', function (e) { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); $('#fc').click(); } });
+  $('#know').addEventListener('click', function () { known[cur[0]] = 1; deck.shift(); save(); showCard(); });
+  $('#again').addEventListener('click', function () { deck.push(deck.shift()); showCard(); });
+  $('#dirBtn').addEventListener('click', function () { dirFr = !dirFr; $('#dirBtn').textContent = dirFr ? 'فرنساوي ← عربي' : 'عربي ← فرنساوي'; showCard(); });
+  $('#vset').addEventListener('change', function () { save(); buildDeck(); showCard(); });
+  save(); buildDeck(); showCard();
+
+  /* ---------- conjugation ---------- */
+  var cQ = null, cOk = 0, cTot = 0, answered = false;
+  function nextC() {
+    var s = $('#cset').value, p = [];
+    if (s === 'all' || s === '1') p = p.concat(V1.map(function (v) { return v[0]; }));
+    if (s === 'all' || s === '2') p = p.concat(V2.map(function (v) { return v[0]; }));
+    if (s === 'all' || s === '3') { for (var k = 0; k < (s === '3' ? 1 : 4); k++) p.push('aller', 'avoir', 'être'); }
+    var v = rnd(p), i = Math.floor(Math.random() * 9), f = conj(v)[i];
+    cQ = { v: v, i: i, f: f }; answered = false;
+    $('#cq').innerHTML = '<small>(' + v + ')</small><br><b>' + pron(i, f).trim() + '</b> ____';
+    $('#cin').value = ''; $('#cfb').textContent = ''; $('#cfb').className = 'cfb';
+  }
+  function norm(s) { return s.trim().toLowerCase().replace(/[’`]/g, "'").replace(/\s+/g, ' ').replace(/^(je |j'|j' |tu |il |elle |on |nous |vous |ils |elles )/, ''); }
+  function strip(s) { return s.normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+  function checkC() {
+    if (answered) { nextC(); $('#cin').focus(); return; }
+    var a = norm($('#cin').value); if (!a) return;
+    answered = true; cTot++;
+    var full = pron(cQ.i, cQ.f) + cQ.f;
+    if (a === cQ.f) { cOk++; $('#cfb').textContent = '✓ برافو: ' + full; $('#cfb').className = 'cfb good'; }
+    else if (strip(a) === strip(cQ.f)) { cOk++; $('#cfb').textContent = '✓ صح، بس خلي بالك من الأكسان: ' + full; $('#cfb').className = 'cfb good'; }
+    else { $('#cfb').textContent = '✗ الصح: ' + full; $('#cfb').className = 'cfb bad'; }
+    say(full); $('#cScore').textContent = cOk + ' / ' + cTot;
+  }
+  $('#ccheck').addEventListener('click', checkC);
+  $('#cnext').addEventListener('click', nextC);
+  $('#cset').addEventListener('change', nextC);
+  $('#cin').addEventListener('keydown', function (e) { if (e.key === 'Enter') checkC(); });
+  document.querySelectorAll('.acc button').forEach(function (b) { b.addEventListener('click', function () { var i = $('#cin'); i.value += b.textContent; i.focus(); }); });
+  nextC();
+
+  /* ---------- phrase drill ---------- */
+  var PH = [["Je","parle","à un enfant"],["Un enfant","mange","la pomme"],["Sylvia","chante","une chanson"],["Le petit chien","regarde","la télévision"],["Nous","finissons","le travail"],["Les élèves","écoutent","le professeur"],["Noha","habite","en France"],["Vous","choisissez","un café"],["Mon fils","aime","le chocolat"],["Elles","préparent","le déjeuner"]];
+  var ROLE = ['Sujet', 'Verbe', 'Complément'], pQ = null, pOk = 0, pTot = 0;
+  function nextP() {
+    var s = rnd(PH), r = Math.floor(Math.random() * 3);
+    pQ = { s: s, r: r, done: false };
+    $('#pBox').innerHTML = '<div class="row" style="margin-top:10px"><p class="fr" style="font-size:1.5rem;flex:1;min-width:0">' + s.join(' ') + '.</p><button type="button" class="spk" data-say="' + s.join(' ') + '" aria-label="اسمع">' + ICON + '</button></div>' +
+      '<p style="margin-top:6px;font-weight:700">فين الـ <span class="fr">' + ROLE[r] + '</span>؟</p>' +
+      '<div class="mopts">' + shuffle([0, 1, 2]).map(function (k) { return '<button class="btn fr" data-p="' + k + '">' + s[k] + '</button>'; }).join('') + '</div>';
+    $('#pNext').hidden = true;
+  }
+  $('#pBox').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-p]'); if (!b || pQ.done) return;
+    pQ.done = true; pTot++;
+    var k = +b.getAttribute('data-p'); if (k === pQ.r) pOk++; else b.classList.add('wrong');
+    $('#pBox').querySelector('[data-p="' + pQ.r + '"]').classList.add('right');
+    $('#pScore').textContent = 'صح ' + pOk + ' من ' + pTot; $('#pNext').hidden = false;
+  });
+  $('#pNext').addEventListener('click', nextP);
+  nextP();
+
+  /* ---------- reading ---------- */
+  var S = ["Pierr[e] e[s]t‿{un} peti[t] garç{on}.", "Il a huit‿{an}[s].", "Il habit[e] d{an}s‿{un} gr{an}d‿appart[e]m{en}[t],", "au troisièm[e]‿étag[e] d'{un}‿immeubl[e].", "J^u^li[e] fai[t] le t~ou~r d^u^ m{on}d[e]."];
+  function plain(s) { return s.replace(/[\[\]{}^~]/g, '').replace(/‿/g, ' '); }
+  function mk(s) { return s.replace(/\[(.*?)\]/g, '<span class="rs">$1</span>').replace(/\{(.*?)\}/g, '<span class="rn">$1</span>').replace(/\^(.*?)\^/g, '<span class="ry">$1</span>').replace(/~(.*?)~/g, '<span class="ru">$1</span>').replace(/‿/g, '<span class="rl">‿</span>'); }
+  $('#sents').innerHTML = S.map(function (s) { return '<div class="sent"><button type="button" class="spk" data-say="' + plain(s) + '" aria-label="اسمع">' + ICON + '</button><p>' + mk(s) + '</p></div>'; }).join('') +
+    '<div class="sent"><button type="button" class="spk" data-say="' + S.map(plain).join(' ') + '" aria-label="اسمع الكل">' + ICON + '</button><p style="font-family:var(--font-ar);direction:rtl;font-size:1rem">اسمع الفقرة كلها واقرا معاها في نفس الوقت (shadowing)</p></div>';
+
+  /* ---------- reading texts ---------- */
+  var T1 = ["Le matin, Sylvie se lève à 6‿heures ou 6‿heures et demie. C'est‿assez tôt pour elle. Elle prend sa douche et elle s'habille. Ensuite, elle prend son petit-déjeuner. Pendant son petit-déjeuner, elle lit un peu et elle écoute la radio. Après son petit-déjeuner, elle s'occupe de ses plantes vertes. Ensuite elle se prépare pour partir au travail : elle se brosse les dents, elle se maquille, elle met son manteau et elle part au travail. Elle part de chez elle à 7‿heures et quart.",
+    "Avant de commencer son travail, elle prend un café avec Julien, son collègue. Elle travaille de 8‿heures à midi. Après son travail, elle va se promener dans‿un parc. Elle se promène pendant une heure et puis elle rentre. Chaque soir, elle fait quelques courses au supermarché du coin, elle parle quelques minutes avec la voisine et elle rentre pour préparer le repas."];
+  var T2 = ["Le matin, Jade se réveille à 7‿heures. C'est le bon moment pour commencer sa journée. Elle se lève, elle prend une douche et elle s'habille rapidement. Ensuite, elle prépare son petit-déjeuner. Pendant qu'elle mange, elle vérifie ses cours, vérifie sa messagerie et planifie sa journée. Elle aime commencer sa matinée de cette manière.",
+    "Après son petit-déjeuner, Jade vérifie son sac. Elle quitte son‿appartement vers 8‿heures et prend le bus pour aller à l'université. Elle arrive généralement vers 8‿heures et demie, juste à temps pour son premier cours.",
+    "Les cours de Jade commencent à 9‿heures. Elle a généralement trois cours par jour. Entre les cours, elle discute avec ses‿amis ou révise ses notes à la bibliothèque universitaire. À midi, elle déjeune avec ses camarades de classe dans‿un petit café situé à deux pas de l'université.",
+    "L'après-midi, Jade travaille souvent en groupe sur des projets. Parfois elle assiste à des séminaires ou à des conférences organisés par sa faculté. Quand‿elle n'a pas cours, elle passe son temps à la bibliothèque pour avancer sur ses devoirs ou étudier pour les‿examens à venir."];
+  function speakable(t) { return t.replace(/‿/g, ' '); }
+  function renderText(paras, el) {
+    var h = '';
+    paras.forEach(function (p, pi) {
+      var sents = p.split(/(?<=[.:])\s+/);
+      h += '<div style="' + (pi ? 'margin-top:14px;padding-top:10px;border-top:1px solid var(--line)' : 'margin-top:8px') + '">';
+      h += '<button type="button" class="chip" data-say="' + speakable(p).replace(/"/g, '&quot;') + '" style="font-family:var(--font-ar);font-size:.9rem">اسمع الفقرة ' + (pi + 1) + ' ' + ICON + '</button>';
+      sents.forEach(function (s) {
+        h += '<div class="sent"><button type="button" class="spk" data-say="' + speakable(s).replace(/"/g, '&quot;') + '" aria-label="اسمع الجملة">' + ICON + '</button><p class="ptext">' + s.replace(/‿/g, '<span class="rl">‿</span>') + '</p></div>';
+      });
+      h += '</div>';
+    });
+    el.innerHTML = h;
+  }
+  renderText(T1, $('#txt1')); renderText(T2, $('#txt2'));
+
+  /* ---------- le / la / l' ---------- */
+  var LA = [["table","الطاولة"],["fenêtre","النافذة"],["tasse","الفنجان"],["pomme","التفاحة"],["chaise","الكرسي"],["voiture","السيارة"],["chambre","الغرفة"],["plage","الشاطئ"],["musique","الموسيقى"],["nature","الطبيعة"],["peinture","الرسم / الدهان"],["couverture","الغطاء"],["porte","الباب"],["lampe","المصباح"],["robe","الفستان"],["bouche","الفم"],["cuisine","المطبخ"],["valise","حقيبة السفر"],["montagne","الجبل"],["semaine","الأسبوع"],["lecture","القراءة"],["culture","الثقافة"]];
+  var LE = [["livre","الكتاب"],["village","القرية"],["voyage","الرحلة / السفر"],["collège","المدرسة الإعدادية"],["téléphone","الهاتف"],["visage","الوجه"],["fromage","الجبن"],["costume","البدلة"],["musée","المتحف"],["garage","الجراج"],["problème","المشكلة"],["message","الرسالة"],["silence","الصمت"],["paysage","المنظر الطبيعي"]];
+  var LL = [["école","المدرسة"],["image","الصورة"],["île","الجزيرة"],["arrivée","الوصول"],["église","الكنيسة"],["heure","الساعة"],["enveloppe","الظرف"],["oreille","الأذن"],["énergie","الطاقة"],["envie","الرغبة"],["histoire","التاريخ / القصة"],["idée","الفكرة"],["adresse","العنوان"],["entrée","المدخل / الدخول"],["habitude","العادة"],["étoile","النجمة"],["épaule","الكتف"],["origine","الأصل"]];
+  function artChips(list, art) {
+    return list.map(function (w) { var f = art === "l'" ? "l'" + w[0] : art + ' ' + w[0]; return '<button type="button" class="chip plain" data-say="' + f + '">' + f + ' <small>' + w[1] + '</small></button>'; }).join('');
+  }
+  $('#artLa').innerHTML = artChips(LA, 'la'); $('#artLe').innerHTML = artChips(LE, 'le'); $('#artL').innerHTML = artChips(LL, "l'");
+  var ALL = LA.map(function (w) { return [w[0], w[1], 'la']; }).concat(LE.map(function (w) { return [w[0], w[1], 'le']; }), LL.map(function (w) { return [w[0], w[1], "l'"]; }));
+  var aQ = null, aOk = 0, aTot = 0;
+  function full(q) { return q[2] === "l'" ? "l'" + q[0] : q[2] + ' ' + q[0]; }
+  function nextA() {
+    aQ = rnd(ALL); aQ.done = false;
+    $('#aWord').innerHTML = '<div class="row" style="justify-content:center"><span class="bigw">___ ' + aQ[0] + '</span></div><span class="hint">' + aQ[1] + '</span>';
+    $('#afb').textContent = '';
+    $('#aOpts').querySelectorAll('[data-a]').forEach(function (b) { b.classList.remove('ok', 'no'); });
+  }
+  $('#aOpts').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-a]'); if (!b) return;
+    if (aQ.done) { nextA(); return; }
+    aQ.done = true; aTot++;
+    var ok = b.getAttribute('data-a') === aQ[2]; if (ok) aOk++;
+    $('#aOpts').querySelectorAll('[data-a]').forEach(function (x) { if (x.getAttribute('data-a') === aQ[2]) x.classList.add('ok'); else if (x === b) x.classList.add('no'); });
+    $('#aWord').innerHTML = '<span class="bigw">' + full(aQ) + '</span><span class="hint">' + aQ[1] + '</span>';
+    var why = aQ[2] === "l'" ? ' — الكلمة بتبدأ بحرف متحرك أو h muet' : (aQ[2] === 'le' ? ' — مذكر' : ' — مؤنث');
+    $('#afb').textContent = (ok ? '✓ صح' : '✗ الصح ' + full(aQ)) + why + ' · اضغط أي اختيار للي بعدها';
+    $('#afb').className = 'cfb ' + (ok ? 'good' : 'bad');
+    $('#aScore').textContent = aOk + ' / ' + aTot;
+    say(full(aQ));
+  });
+  nextA();
+
+  /* ---------- full test ---------- */
+  var Q = [
+    ["في كلمة <span class=fr>sac</span>، الـ c الأخيرة…", ["بتتنطق", "ساكتة"], 0, "C من حروف CaReFuL اللي غالبًا بتتنطق في آخر الكلمة.", "sac"],
+    ["في كلمة <span class=fr>cher</span>، الـ r الأخيرة…", ["بتتنطق", "ساكتة"], 0, "R من CaReFuL.", "cher"],
+    ["في كلمة <span class=fr>grand</span>، الـ d الأخيرة…", ["بتتنطق", "ساكتة"], 1, "ساكتة: /gʁɑ̃/. بتظهر بس في الربط (grand‿appartement) وبتتنطق t.", "grand"],
+    ["إزاي بننطق <span class=fr>samedi</span>؟", ["سا-مِ-دي", "سام-دي"], 1, "الـ e في النص e muet فبتقع: /samdi/.", "samedi"],
+    ["أنهي واحدة فيها <b>h muet</b>؟", ["le héros", "l'homme"], 1, "l'homme: حصل اختصار (le → l')، يبقى h muet.", "l'homme"],
+    ["<span class=fr>les héros</span> فيها ربط؟", ["أيوه", "لأ: /le eʁo/"], 1, "h aspiré: مفيش ربط ولا اختصار.", "les héros"],
+    ["<span class=fr>dans un</span> بتتنطق…", ["/dɑ̃ œ̃/", "/dɑ̃zœ̃/"], 1, "liaison: الـ s الساكتة بتصحى وتتنطق z.", "dans un"],
+    ["أنهي كلمة فيها صوت <b>[y]</b> زي Julie؟", ["tour", "tout", "bu"], 2, "u لوحدها = [y]. ou = [u].", "bu"],
+    ["أنهي كلمة فيها <b>صوت أنفي</b>؟", ["ami", "monde", "mer"], 1, "on في monde صوت أنفي /ɔ̃/.", "monde"],
+    ["<span class=fr>ils marchent</span> بتتنطق…", ["زي il marche", "/il maʁʃɑ̃/"], 0, "-ent في آخر الفعل ساكتة دايمًا، مش صوت أنفي.", "ils marchent"],
+    ["الصح:", ["je aime", "j'aime"], 1, "je قبل حرف متحرك بتبقى j'.", "j'aime"],
+    ["nous + finir =", ["nous finons", "nous finissons"], 1, "المجموعة ٢: -issons / -issez / -issent في الجمع.", "nous finissons"],
+    ["ils + choisir =", ["ils choisent", "ils choisissent"], 1, "زي finir: ils choisissent.", "ils choisissent"],
+    ["elle + grandir =", ["elle grandit", "elle grandis"], 0, "il/elle/on في المجموعة ٢ بتاخد -it.", "elle grandit"],
+    ["الفعل <span class=fr>aller</span> من أنهي مجموعة؟", ["الأولى عشان بينتهي بـ -er", "التالتة"], 1, "aller شاذ فهو من المجموعة ٣، رغم إنه بينتهي بـ -er.", "aller"],
+    ["je + avoir =", ["je ai", "j'ai"], 1, "j'ai: اختصار قبل حرف متحرك.", "j'ai"],
+    ["<span class=fr>/ilzɔ̃/</span> معناها…", ["ils ont (عندهم)", "ils sont (هم يكونوا)"], 0, "ils‿ont بصوت z = avoir. ils sont بصوت s = être.", "ils ont"],
+    ["vous + être =", ["vous êtes", "vous étez"], 0, "vous‿êtes، والـ s بتتنطق z في الربط.", "vous êtes"],
+    ["<span class=fr>nous avons</span> بتتنطق…", ["/nu avɔ̃/", "/nuzavɔ̃/"], 1, "نفس قاعدة الربط: s ← z.", "nous avons"],
+    ["في <span class=fr>Un enfant mange la pomme</span> الـ Sujet هو…", ["un enfant", "mange", "la pomme"], 0, "Sujet (un enfant) + Verbe (mange) + Complément (la pomme).", "un enfant mange la pomme"],
+    ["في <span class=fr>un petit enfant italien</span> كلمة italien…", ["déterminant", "nom", "adjectif"], 2, "un = déterminant، enfant = nom، petit و italien = adjectifs.", "un petit enfant italien"],
+    ["إزاي بنقرا المقطع <span class=fr>bè</span>؟", ["/bɛ/ مفتوحة", "/be/ مقفولة"], 0, "è و ê الاتنين /ɛ/ مفتوحة.", "bè"],
+    ["___ chaise (الكرسي)", ["le", "la", "l'"], 1, "la chaise: مؤنث في الفرنساوي.", "la chaise"],
+    ["___ fromage (الجبن)", ["le", "la", "l'"], 0, "le fromage: الكلمات اللي بتنتهي بـ -age غالبًا مذكر.", "le fromage"],
+    ["___ heure (الساعة)", ["le", "la", "l'"], 2, "h muet فبنختصر: l'heure.", "l'heure"],
+    ["إزاي بننطق <span class=fr>neuf heures</span>؟", ["/nœf œʁ/", "/nœvœʁ/"], 1, "مع heures الـ f بتتنطق v وبتتربط.", "neuf heures"],
+    ["<span class=fr>chez</span> و <span class=fr>parler</span> و <span class=fr>et</span> فيهم صوت…", ["/e/ زي é", "/ɛ/ زي è"], 0, "é = er = ez = et.", "chez"],
+    ["<span class=fr>mais</span> و <span class=fr>c'est</span> فيهم صوت…", ["/e/ زي é", "/ɛ/ زي è"], 1, "è = est = ai = ê.", "mais"],
+    ["<span class=fr>eau</span> بتتنطق…", ["/o/", "/e-a-u/"], 0, "o = au = eau.", "eau"],
+    ["<span class=fr>le hasard</span>: الـ h…", ["muet", "aspiré"], 1, "le hasard / les hasards: مفيش اختصار ولا ربط.", "le hasard"],
+    ["<span class=fr>les herbes</span> فيها ربط؟", ["أيوه: /lezɛʁb/", "لأ"], 0, "h muet: l'herbe / les‿herbes.", "les herbes"],
+    ["المقطع <span class=fr>tu</span> بيتنطق…", ["زي «تو» العربي", "/ty/ بشفايف مضمومة"], 1, "u = /y/. لو عايز «تو» تكتبها tou.", "tu"]
+  ];
+  var qi = 0, qOk = 0, order = [];
+  function startQ() { order = shuffle(Q); qi = 0; qOk = 0; showQ(); }
+  function showQ() {
+    $('#qMeter').style.width = (qi / order.length * 100) + '%';
+    if (qi >= order.length) {
+      $('#qBox').innerHTML = '<div class="result"><div class="score">' + qOk + '/' + order.length + '</div><p>' + (qOk >= order.length - 2 ? 'ممتاز، كمّل كده.' : 'كويس. راجع الدروس اللي غلطت فيها وجرّب تاني.') + '</p><button type="button" class="go" id="qRe">ابدأ من الأول</button></div>';
+      $('#qRe').addEventListener('click', startQ); $('#qNext').hidden = true; $('#qNum').textContent = ''; return;
+    }
+    var q = order[qi];
+    $('#qNum').textContent = 'سؤال ' + (qi + 1) + ' من ' + order.length; $('#qScore').textContent = 'صح ' + qOk;
+    $('#qBox').innerHTML = '<div class="row" style="margin-top:14px"><div style="font-size:1.1rem;font-weight:700;flex:1;min-width:0">' + q[0] + '</div><button type="button" class="spk" data-say="' + q[4] + '" aria-label="اسمع">' + ICON + '</button></div>' +
+      '<div class="mopts">' + q[1].map(function (x, i) { return '<button class="btn" data-i="' + i + '">' + (/[؀-ۿ]/.test(x) ? x : '<span class="fr">' + x + '</span>') + '</button>'; }).join('') + '</div><div class="why" hidden>' + q[3] + '</div>';
+    $('#qNext').hidden = true;
+  }
+  $('#qBox').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-i]'); var box = $('#qBox .mopts');
+    if (!b || !box || box.getAttribute('data-done')) return;
+    box.setAttribute('data-done', 1);
+    var q = order[qi], i = +b.getAttribute('data-i');
+    if (i === q[2]) qOk++; else b.classList.add('wrong');
+    box.children[q[2]].classList.add('right');
+    $('#qBox .why').hidden = false; $('#qNext').hidden = false; $('#qScore').textContent = 'صح ' + qOk;
+    say(q[4]);
+  });
+  $('#qNext').addEventListener('click', function () { qi++; showQ(); });
+  startQ();
 })();
 </script>
 </body>
