@@ -3,43 +3,33 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#14213D">
+<meta name="theme-color" content="#262624">
 <title>Cahier de français</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=DM+Serif+Display&display=swap">
 <style>
-:root { color-scheme: light; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+:root { color-scheme: dark; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
 body { margin: 0; }
 [hidden] { display: none !important; }
 img { max-width: 100%; }
 /* Layout: one narrow RTL column. Every rule is a panel of tappable words: silent letters are struck out in red, pronounced letters sit on a blue tint. */
 :root {
-  --paper: #F2F5FA;
-  --card: #FFFFFF;
-  --ink: #14213D;
-  --muted: #58647F;
-  --line: #D5DCEA;
-  --say: #1B4FC4;
-  --say-bg: #E3EBFD;
-  --sil: #C0392B;
-  --ok: #16794F;
-  --ok-bg: #DDF3E8;
-  --bad-bg: #FBE4E1;
+  /* dark, matching Claude's dark mode greys */
+  --paper: #262624;
+  --card: #30302E;
+  --ink: #FAF9F5;
+  --muted: #A8A69E;
+  --line: #45443F;
+  --say: #9DB6FF;
+  --say-bg: #34384A;
+  --sil: #FF8A7A;
+  --ok: #7FD1A0;
+  --ok-bg: #26392E;
+  --bad-bg: #452A29;
   --font-ar: "Cairo", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-fr: "DM Serif Display", Georgia, "Times New Roman", serif;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --paper: #0D1426; --card: #151E36; --ink: #E6EBF7; --muted: #98A4C0; --line: #28345A;
-    --say: #86A8FF; --say-bg: #1D2C57; --sil: #FF8F82; --ok: #5BD9A1; --ok-bg: #123B2C; --bad-bg: #4A1E22;
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --paper: #0D1426; --card: #151E36; --ink: #E6EBF7; --muted: #98A4C0; --line: #28345A;
-  --say: #86A8FF; --say-bg: #1D2C57; --sil: #FF8F82; --ok: #5BD9A1; --ok-bg: #123B2C; --bad-bg: #4A1E22;
   color-scheme: dark;
 }
 
